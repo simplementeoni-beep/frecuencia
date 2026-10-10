@@ -1,0 +1,35 @@
+# Dependencias / paquetes
+node_modules/
+.npm/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Borradores y bocetos (archivos de trabajo)
+borrador/
+bocetos/
+
+# Archivos de audio grandes (opcionales — descomenta si los quieres excluir)
+# audio/
+# Auidos/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build (por si se añade bundler en el futuro)
+dist/
+build/

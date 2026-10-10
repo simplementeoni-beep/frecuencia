@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Frecuencia · juego</title>
+  <meta name="description"
+    content="Terror rítmico en primera persona. Sigue el pulso en la oscuridad, cambia de arma al compás y sobrevive al Proyecto F.">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=VT323&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #efedf3;
+      --fg: #1b1726;
+      --muted: #5b546e;
+      --line: #cfc9dc;
+      --accent: #6a3de0;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0a10;
+        --fg: #e9e5f2;
+        --muted: #9b94ae;
+        --line: #2a2439;
+        --accent: #a983ff;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0b0a10;
+      --fg: #e9e5f2;
+      --muted: #9b94ae;
+      --line: #2a2439;
+      --accent: #a983ff;
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: 16px;
+      line-height: 1.6
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 22px 14px 60px
+    }
+
+    h1 {
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-weight: 400;
+      font-size: clamp(34px, 6vw, 56px);
+      letter-spacing: .07em;
+      line-height: 1;
+      margin: 0 0 4px
+    }
+
+    .sub {
+      margin: 0 0 16px;
+      color: var(--muted)
+    }
+
+    #stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      outline: none
+    }
+
+    #c {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block
+    }
+
+    .ov {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px;
+      background: rgba(5, 4, 8, .85);
+      color: #e9e5f2
+    }
+
+    .ov.hidden {
+      display: none
+    }
+
+    .ov h2 {
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-weight: 400;
+      font-size: clamp(34px, 8vw, 84px);
+      letter-spacing: .14em;
+      line-height: 1;
+      margin: 0 0 10px
+    }
+
+    .ov p {
+      margin: 4px 0;
+      max-width: 54ch;
+      color: #b9b2cc;
+      font-size: clamp(12px, 2.1vw, 17px)
+    }
+
+    .ov .big {
+      font-size: clamp(22px, 5vw, 46px);
+      color: #e6dfc9;
+      margin: 0
+    }
+
+    .ov .quote {
+      font-size: clamp(18px, 3.6vw, 32px);
+      color: #f0ebff;
+      font-style: italic;
+      line-height: 1.4;
+      max-width: 44ch
+    }
+
+    .ov .f {
+      color: #b596ff
+    }
+
+    @keyframes glitch-anim {
+      0% {
+        text-shadow: 3px 0 rgba(255, 0, 0, 0.8), -3px 0 rgba(0, 0, 255, 0.8);
+        transform: translate(1px, 1px);
+      }
+
+      20% {
+        text-shadow: -3px 0 rgba(255, 0, 0, 0.8), 3px 0 rgba(0, 0, 255, 0.8);
+        transform: translate(-1px, -2px);
+      }
+
+      40% {
+        text-shadow: 3px 0 rgba(255, 0, 0, 0.8), -3px 0 rgba(0, 0, 255, 0.8);
+        transform: translate(-2px, 1px);
+      }
+
+      60% {
+        text-shadow: -3px 0 rgba(255, 0, 0, 0.8), 3px 0 rgba(0, 0, 255, 0.8);
+        transform: translate(1px, -1px);
+      }
+
+      80% {
+        text-shadow: 3px 0 rgba(255, 0, 0, 0.8), -3px 0 rgba(0, 0, 255, 0.8);
+        transform: translate(2px, 2px);
+      }
+
+      100% {
+        text-shadow: -3px 0 rgba(255, 0, 0, 0.8), 3px 0 rgba(0, 0, 255, 0.8);
+        transform: translate(-1px, -1px);
+      }
+    }
+
+    #title {
+      background: radial-gradient(circle at center, rgba(15, 0, 5, 0.8) 0%, rgba(0, 0, 0, 0.98) 100%),
+        url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.12"/></svg>');
+    }
+
+    #title h2 {
+      color: #f7e6e6;
+      font-size: clamp(50px, 12vw, 130px);
+      letter-spacing: 0.15em;
+      text-shadow: 4px 4px 15px rgba(220, 20, 60, 0.9), -2px -2px 10px rgba(100, 0, 0, 0.6);
+      animation: glitch-anim 2s infinite alternate-reverse;
+      margin-bottom: 25px;
+    }
+
+    #title p {
+      color: #cbb3b3;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+
+    .ov button {
+      margin-top: 12px;
+      font: inherit;
+      font-size: clamp(13px, 2.4vw, 18px);
+      padding: 8px 22px;
+      background: transparent;
+      color: #e9e5f2;
+      border: 1px solid #8b5cff;
+      border-radius: 3px;
+      cursor: pointer
+    }
+
+    .ov button:hover,
+    .ov button:focus-visible {
+      background: rgba(139, 92, 255, .22);
+      outline: 2px solid #a983ff;
+      outline-offset: 2px
+    }
+
+    #memory {
+      background: radial-gradient(circle at center, rgba(38, 18, 58, .95) 0%, rgba(5, 4, 8, .98) 85%);
+    }
+
+    #memory .cinematic-f {
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-size: clamp(80px, 18vw, 160px);
+      color: #b596ff;
+      text-shadow: 0 0 35px rgba(181, 150, 255, .75);
+      margin: 0;
+      line-height: .85;
+      animation: pulseF 2.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseF {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: .85;
+        text-shadow: 0 0 25px rgba(181, 150, 255, .6)
+      }
+
+      50% {
+        transform: scale(1.06);
+        opacity: 1;
+        text-shadow: 0 0 55px rgba(181, 150, 255, .95)
+      }
+    }
+
+    .levels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 12px;
+      font-size: clamp(11px, 1.8vw, 14px);
+      color: #8a84a0
+    }
+
+    .levels button {
+      margin: 0;
+      padding: 3px 10px;
+      font-size: clamp(11px, 1.8vw, 14px);
+      border-color: #4a4360
+    }
+
+    #pad {
+      font-size: clamp(11px, 1.8vw, 14px);
+      color: #8a84a0
+    }
+
+    .help {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px 28px;
+      margin: 22px 0 0
+    }
+
+    .help h2 {
+      font-family: "Special Elite", "Courier New", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      margin: 0 0 4px
+    }
+
+    .help ul {
+      margin: 0;
+      padding-left: 1.1em;
+      color: var(--muted);
+      font-size: 15px
+    }
+
+    .help li {
+      margin: 0 0 4px
+    }
+
+    kbd {
+      font-family: inherit;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0 5px;
+      font-size: .92em
+    }
+
+    .note {
+      margin: 22px 0 0;
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px
+    }
+
+    #name-input,
+    #leaderboard {
+      background: radial-gradient(circle at center, rgba(38, 18, 58, .95) 0%, rgba(5, 4, 8, .98) 85%);
+    }
+
+    #name-input input {
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: 24px;
+      padding: 10px;
+      text-align: center;
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      border-radius: 4px;
+      outline: none;
+      margin: 15px 0;
+      width: 80%;
+      max-width: 300px;
+      text-transform: uppercase;
+    }
+
+    #name-input input:focus {
+      box-shadow: 0 0 15px rgba(139, 92, 255, .5);
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      max-width: 480px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .leaderboard-table th {
+      border-bottom: 2px solid var(--accent);
+      padding: 8px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .leaderboard-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      color: #e9e5f2;
+    }
+
+    .leaderboard-table tr:hover td {
+      background: rgba(139, 92, 255, .1);
+    }
+
+    #btn-fullscreen {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 25;
+      background: rgba(10, 8, 16, .75);
+      color: var(--muted);
+      border: 1px solid var(--muted);
+      padding: 5px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-family: "Special Elite", "Courier New", monospace;
+      backdrop-filter: blur(2px);
+    }
+
+    #btn-fullscreen:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(26, 18, 44, .9);
+    }
+
+    #toast-container {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .toast {
+      font-family: "VT323", "Courier New", monospace;
+      font-size: 18px;
+      color: #fff;
+      background: rgba(10, 8, 20, .82);
+      border: 1px solid rgba(169, 131, 255, .4);
+      border-radius: 4px;
+      padding: 5px 16px;
+      opacity: 0;
+      transition: opacity .25s;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .diff-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .diff-btn {
+      background: rgba(10, 8, 20, 0.8);
+      border: 2px solid #4a4360;
+      color: #8a84a0;
+      padding: 8px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      border-radius: 4px;
+    }
+
+    .diff-btn:hover {
+      border-color: #b596ff;
+      color: #b596ff;
+      background: rgba(181, 150, 255, 0.1);
+    }
+
+    .diff-btn.active {
+      border-color: #b596ff;
+      color: #fff;
+      background: rgba(181, 150, 255, 0.25);
+      box-shadow: 0 0 15px rgba(181, 150, 255, 0.6), inset 0 0 8px rgba(181, 150, 255, 0.4);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <h1>Frecuencia</h1>
+    <p class="sub">Terror rítmico en primera persona. Sigue el pulso en la oscuridad, cambia de arma al compás y
+      sobrevive al Proyecto F.</p>
+
+    <div id="stage" tabindex="0" aria-label="Juego Frecuencia">
+      <canvas id="c"></canvas>
+      <button id="btn-fullscreen" type="button">Pantalla Completa</button>
+      <div id="toast-container"></div>
+
+      <div id="title" class="ov">
+        <h2>FRECUENCIA</h2>
+        <p>Despiertas en la oscuridad. Sigue el pulso.</p>
+        <p>Dispara justo cuando el círculo llega a la mira: sube el combo y la música suma capas.</p>
+
+        <div class="diff-selector" id="diff-selector">
+          <button class="diff-btn" data-diff="easy" type="button">Fácil</button>
+          <button class="diff-btn active" data-diff="normal" type="button">Normal</button>
+          <button class="diff-btn" data-diff="hard" type="button">Pesadilla</button>
+        </div>
+
+        <button id="go" type="button">Empezar</button>
+        <div class="levels" id="levels">
+          <span>Probar una sala:</span>
+          <button type="button" data-level="0">Despertar</button>
+          <button type="button" data-level="1">Morgue</button>
+          <button type="button" data-level="2">Perrera</button>
+          <button type="button" data-level="3">Quirófano</button>
+          <button type="button" data-level="4">Jefe</button>
+        </div>
+        <p id="pad">Conecta el mando y presiona un botón para detectarlo. Haz clic o presiona Enter para activar sonido.
+        </p>
+      </div>
+
+      <div id="card" class="ov hidden">
+        <p id="cardsub"></p>
+        <h2 id="cardname"></h2>
+        <p id="cardweapon"></p>
+      </div>
+
+      <div id="dead" class="ov hidden">
+        <p class="big">Presiona <span class="f">F</span></p>
+        <p>para reiniciar la frecuencia</p>
+      </div>
+
+      <div id="memory" class="ov hidden">
+        <div class="cinematic-f">F</div>
+        <p id="memhead" style="letter-spacing:.15em;text-transform:uppercase;color:#8a84a0;font-size:14px">Recuerdo</p>
+        <p id="memquote" class="quote"></p>
+        <p style="margin-top:20px;font-size:13px;color:#8a84a0">Presiona <span class="f">F</span> o espera para
+          continuar</p>
+      </div>
+
+      <div id="win" class="ov hidden">
+        <h2>FIN</h2>
+        <p id="endtext">El corazón biomecánico se detiene. La frecuencia por fin ha cesado.</p>
+        <p id="stats"></p>
+        <p>Presiona <span class="f">F</span> para jugar otra vez</p>
+      </div>
+
+      <div id="name-input" class="ov hidden">
+        <h2>IDENTIFICACIÓN</h2>
+        <p>Introduce tu identificador para el Proyecto F:</p>
+        <input type="text" id="player-name-field" maxlength="10" placeholder="NOMBRE" autocomplete="off">
+        <button id="btn-confirm-name" type="button">Comenzar Prueba</button>
+      </div>
+
+      <div id="leaderboard" class="ov hidden">
+        <h2>CLASIFICACIÓN</h2>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Piloto</th>
+              <th>Tiempo</th>
+              <th>Disparos</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+        <button id="btn-leaderboard-close" type="button">Cerrar</button>
+      </div>
+    </div>
+
+    <div class="help">
+      <div>
+        <h2>Mando</h2>
+        <ul>
+          <li>Stick izquierdo: moverte</li>
+          <li>Stick derecho: girar</li>
+          <li>Gatillo derecho o botón A: atacar</li>
+          <li>LB / RB (botones superiores): cambiar arma</li>
+          <li>Cualquier botón: continuar y "Presiona F"</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Teclado</h2>
+        <ul>
+          <li><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>: moverte</li>
+          <li><kbd>&#8592;</kbd> <kbd>&#8594;</kbd> o <kbd>Q</kbd> <kbd>E</kbd>: girar</li>
+          <li><kbd>1</kbd> a <kbd>5</kbd> o Rueda ratón: cambiar arma</li>
+          <li><kbd>Espacio</kbd> o clic: atacar / disparar</li>
+          <li><kbd>F</kbd> o <kbd>Enter</kbd>: continuar</li>
+          <li><kbd>N</kbd>: saltar de nivel</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Ritmo y Arsenal</h2>
+        <ul>
+          <li>Al compás: combo x4, aturdimiento a zombis, esquiva al perro</li>
+          <li>Bisturí: sin munición, daño crítico cuerpo a cuerpo</li>
+          <li>Escopeta y SMG: munición limitada en cajas del mapa</li>
+          <li>Ajuste de ritmo con <kbd>,</kbd> y <kbd>.</kbd> (<span id="off">0 ms</span>)</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="note">Frecuencia · Prototipo extendido con arsenal persistente, enemigos con IA por estados, sprites
+      procedurales de horror, linterna y sistema de ritmo generativo.</p>
+  </main>
+
+  <script type="module">
+    import { Game } from './js/main.js';
+    window.game = new Game();
+    window.game.start();
+  </script>
+</body>
+
+</html>
