@@ -133,4 +133,10 @@ Luego abre `http://localhost:8080` en tu navegador.
 
 ## 📝 Licencia
 
-Proyecto educativo / personal. Todos los derechos reservados © ONI.
+Distribuido bajo la **Apache License 2.0**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+```
+Copyright 2026 ONI (simplementeoni-beep)
+
+Licensed under the Apache License, Version 2.0
+```
