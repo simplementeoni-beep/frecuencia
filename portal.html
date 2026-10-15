@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FRECUENCIA · De Médico a Interno · Portal del Proyecto & Evaluación</title>
+  <meta name="description"
+    content="Portal oficial del videojuego FRECUENCIA: Un psiquiatra recluido como interno en un hospital subterráneo experimental. Terror rítmico en primera persona. Juega la demo en línea y califica en Google Forms para la feria escolar.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=VT323&family=Outfit:wght@300;400;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #07050b;
+      --bg-surface: #0e0a16;
+      --bg-card: rgba(18, 14, 28, 0.75);
+      --fg: #e9e5f2;
+      --fg-dim: #9b94ae;
+      --line: #2a2238;
+      --line-bright: rgba(169, 131, 255, 0.35);
+      --accent: #a983ff;
+      --accent-glow: rgba(169, 131, 255, 0.5);
+      --crimson: #dc143c;
+      --crimson-glow: rgba(220, 20, 60, 0.6);
+      --cyan: #00f0ff;
+      --green: #27c93f;
+      --font-display: "Bebas Neue", Impact, sans-serif;
+      --font-mono: "VT323", monospace;
+      --font-typewriter: "Special Elite", "Courier New", monospace;
+      --font-body: "Outfit", -apple-system, sans-serif;
+      box-sizing: border-box;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(106, 61, 224, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 60%, rgba(220, 20, 60, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+        url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.04"/></svg>');
+    }
+
+    /* Ambient scanline overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 26, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ── Header ── */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 5, 11, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .heartbeat-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--crimson);
+      box-shadow: 0 0 14px var(--crimson-glow);
+      animation: heartbeat 1.3s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      20% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 24px var(--crimson); }
+      40% { transform: scale(1.1); opacity: 0.9; }
+      60% { transform: scale(1.3); opacity: 1; }
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(169, 131, 255, 0.5);
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent);
+      background: rgba(169, 131, 255, 0.1);
+      border: 1px solid rgba(169, 131, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    nav.header-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link {
+      font-family: var(--font-typewriter);
+      font-size: 14px;
+      color: var(--fg-dim);
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(169, 131, 255, 0.1);
+    }
+
+    .nav-btn-highlight {
+      font-family: var(--font-display);
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: linear-gradient(135deg, #a983ff 0%, #6a3de0 100%);
+      padding: 6px 16px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 15px rgba(169, 131, 255, 0.4);
+      transition: all 0.2s;
+    }
+
+    .nav-btn-highlight:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 25px rgba(169, 131, 255, 0.8);
+    }
+
+    /* ── Hamburger Menu (Mobile) ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      border: none;
+      background: transparent;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--fg);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 820px) {
+      .hamburger { display: flex; }
+
+      nav.header-nav {
+        display: none;
+        position: fixed;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: rgba(7, 5, 11, 0.97);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 16px;
+        z-index: 99;
+      }
+
+      nav.header-nav.open {
+        display: flex;
+        animation: navSlide 0.25s ease;
+      }
+
+      @keyframes navSlide {
+        from { opacity: 0; transform: translateY(-10px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .nav-link { font-size: 16px; padding: 10px 14px; }
+      .nav-btn-highlight { font-size: 20px; padding: 10px 14px; text-align: center; }
+    }
+
+    /* ── Hero Section ── */
+    section.hero {
+      padding: 50px 0 40px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 4px 12px;
+      border-radius: 30px;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 7vw, 76px);
+      line-height: 0.95;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+      color: #fff;
+      text-shadow: 0 0 30px rgba(169, 131, 255, 0.4);
+    }
+
+    .hero-title span.glitch-text {
+      color: #ff335c;
+      position: relative;
+      animation: glitch-anim 3.5s infinite;
+    }
+
+    @keyframes glitch-anim {
+      0%, 90%, 100% {
+        text-shadow: 3px 3px 0 rgba(106, 61, 224, 0.8), -2px -2px 0 rgba(0, 240, 255, 0.7);
+        transform: none;
+      }
+      91% {
+        text-shadow: -4px 0 #00f0ff, 4px 0 rgba(106, 61, 224, 0.9);
+        transform: skewX(-8deg) translateX(3px);
+      }
+      92% {
+        text-shadow: 4px 0 #a983ff, -4px 0 #ff335c;
+        transform: skewX(5deg) translateX(-2px);
+      }
+      93% {
+        text-shadow: -3px 0 #00f0ff, 3px 2px rgba(220, 20, 60, 0.9);
+        transform: skewX(-3deg);
+      }
+      94% {
+        text-shadow: 3px 3px 0 rgba(106, 61, 224, 0.8), -2px -2px 0 rgba(0, 240, 255, 0.7);
+        transform: none;
+      }
+      96% {
+        text-shadow: 6px 0 #00f0ff, -6px 0 #a983ff;
+        transform: skewX(10deg) translateX(-4px);
+        opacity: 0.7;
+      }
+      97% {
+        text-shadow: 3px 3px 0 rgba(106, 61, 224, 0.8), -2px -2px 0 rgba(0, 240, 255, 0.7);
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    .hero-desc {
+      font-size: clamp(16px, 2vw, 18px);
+      color: var(--fg-dim);
+      margin-bottom: 24px;
+      max-width: 52ch;
+      line-height: 1.6;
+    }
+
+    .hero-quote {
+      font-family: var(--font-typewriter);
+      font-size: 15px;
+      color: #d1c8e6;
+      border-left: 3px solid var(--crimson);
+      padding-left: 14px;
+      margin-bottom: 30px;
+      background: rgba(220, 20, 60, 0.05);
+      padding: 10px 14px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn-main-demo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 24px;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: linear-gradient(135deg, #a983ff 0%, #6a3de0 100%);
+      padding: 14px 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 25px rgba(169, 131, 255, 0.5);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-main-demo:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 40px rgba(169, 131, 255, 0.85);
+      background: linear-gradient(135deg, #bda1ff 0%, #7b4cf5 100%);
+    }
+
+    .btn-main-form {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 24px;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: rgba(220, 20, 60, 0.2);
+      border: 1px solid var(--crimson);
+      padding: 14px 28px;
+      border-radius: 6px;
+      box-shadow: 0 0 20px rgba(220, 20, 60, 0.35);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-main-form:hover {
+      transform: translateY(-3px) scale(1.02);
+      background: rgba(220, 20, 60, 0.4);
+      box-shadow: 0 0 35px rgba(220, 20, 60, 0.7);
+      border-color: #ff4d6d;
+    }
+
+    /* Poster Card Preview */
+    .hero-poster-frame {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line-bright);
+      background: #000;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(169, 131, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hero-poster-frame:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(169, 131, 255, 0.35);
+    }
+
+    .hero-poster-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: contrast(1.05);
+    }
+
+    .poster-tape {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: #07050b;
+      background: #00f0ff;
+      padding: 3px 10px;
+      letter-spacing: 0.08em;
+      font-weight: bold;
+      transform: rotate(3deg);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ── The Two Main Portals (Grid Section) ── */
+    section.portals-section {
+      padding: 50px 0 60px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .section-pill {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5vw, 52px);
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+
+    .portals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 820px) {
+      .portals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .portal-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(14px);
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .portal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-bright);
+    }
+
+    .portal-card.card-demo:hover {
+      box-shadow: 0 15px 45px rgba(106, 61, 224, 0.25), 0 0 25px rgba(169, 131, 255, 0.2);
+    }
+
+    .portal-card.card-form:hover {
+      box-shadow: 0 15px 45px rgba(220, 20, 60, 0.25), 0 0 25px rgba(220, 20, 60, 0.2);
+    }
+
+    .portal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      width: fit-content;
+      margin-bottom: 16px;
+    }
+
+    .badge-demo {
+      background: rgba(121, 226, 166, 0.12);
+      border: 1px solid rgba(121, 226, 166, 0.4);
+      color: #79e2a6;
+    }
+
+    .badge-form {
+      background: rgba(220, 20, 60, 0.15);
+      border: 1px solid rgba(220, 20, 60, 0.5);
+      color: #ff8598;
+    }
+
+    .portal-card h3 {
+      font-family: var(--font-display);
+      font-size: 38px;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .portal-desc {
+      font-size: 15px;
+      color: var(--fg-dim);
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .portal-features {
+      list-style: none;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .portal-features li {
+      font-size: 14px;
+      color: #d1c8e6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .portal-features li .check-icon {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-card-launch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.06em;
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-launch-demo {
+      background: linear-gradient(135deg, #a983ff 0%, #6a3de0 100%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 20px rgba(106, 61, 224, 0.4);
+    }
+
+    .btn-launch-demo:hover {
+      box-shadow: 0 6px 30px rgba(169, 131, 255, 0.7);
+      background: linear-gradient(135deg, #ba9eff 0%, #7949f5 100%);
+    }
+
+    .btn-launch-form {
+      background: linear-gradient(135deg, #dc143c 0%, #990022 100%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 20px rgba(220, 20, 60, 0.4);
+    }
+
+    .btn-launch-form:hover {
+      box-shadow: 0 6px 30px rgba(220, 20, 60, 0.7);
+      background: linear-gradient(135deg, #f0254f 0%, #ba052e 100%);
+    }
+
+    .btn-card-secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-typewriter);
+      font-size: 13px;
+      color: var(--fg-dim);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+      padding: 9px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-card-secondary:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent);
+    }
+
+    /* ── Embedded Form Section (Toggleable) ── */
+    section#seccion-formulario {
+      padding: 40px 0 60px;
+    }
+
+    .terminal-container {
+      border: 1px solid var(--line-bright);
+      border-radius: 10px;
+      background: #0b0813;
+      overflow: hidden;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(169, 131, 255, 0.15);
+    }
+
+    .terminal-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: #130f1f;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 16px;
+    }
+
+    .terminal-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot-ctrl {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .terminal-id {
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+
+    .terminal-mode {
+      color: #79e2a6;
+      font-size: 14px;
+    }
+
+    .form-iframe-holder {
+      width: 100%;
+      background: #fff;
+    }
+
+    .form-iframe-holder iframe {
+      display: block;
+      width: 100%;
+      height: 940px;
+      border: none;
+    }
+
+    @media (max-width: 640px) {
+      .form-iframe-holder iframe {
+        height: 600px;
+      }
+    }
+
+    .terminal-bottom-bar {
+      padding: 14px 20px;
+      background: #130f1f;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--fg-dim);
+    }
+
+    .terminal-bottom-bar a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .terminal-bottom-bar a:hover {
+      color: #fff;
+    }
+
+    /* QR Code Card Modal */
+    .qr-popover {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .qr-popover.active {
+      display: flex;
+    }
+
+    .qr-modal-box {
+      background: #120e1c;
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(169, 131, 255, 0.4);
+      animation: modalPop 0.25s ease;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .qr-modal-box h4 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .qr-modal-box p {
+      font-size: 14px;
+      color: var(--fg-dim);
+      margin-bottom: 18px;
+    }
+
+    .qr-img-wrap {
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .qr-img-wrap img {
+      display: block;
+      width: 200px;
+      height: 200px;
+    }
+
+    .btn-close-modal {
+      font-family: var(--font-typewriter);
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid var(--line);
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-close-modal:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    /* ── Historia Cinematográfica ── */
+    section.cinematic-story-section {
+      padding: 60px 0 70px;
+      border-top: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 20% 50%, rgba(106, 61, 224, 0.07) 0%, transparent 55%),
+        radial-gradient(circle at 80% 20%, rgba(220, 20, 60, 0.06) 0%, transparent 50%);
+    }
+
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+    }
+
+    .chapter-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
+      min-height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      background: rgba(14, 10, 22, 0.7);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chapter-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7), 0 0 20px rgba(169, 131, 255, 0.1);
+    }
+
+    .chapter-item.reverse {
+      direction: rtl;
+    }
+
+    .chapter-item.reverse > * {
+      direction: ltr;
+    }
+
+    .chapter-img-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+    }
+
+    .chapter-img-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease, filter 0.3s ease;
+      filter: contrast(1.08) brightness(0.85);
+    }
+
+    .chapter-item:hover .chapter-img-panel img {
+      transform: scale(1.04);
+      filter: contrast(1.12) brightness(0.95);
+    }
+
+    .chapter-img-fallback {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      background: linear-gradient(135deg, #0e0a16 0%, #1a1028 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      color: rgba(169, 131, 255, 0.3);
+    }
+
+    .chapter-number-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-family: var(--font-display);
+      font-size: 120px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.06);
+      padding: 10px 18px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .chapter-label-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 14px;
+      background: linear-gradient(to top, rgba(7,5,11,0.9) 0%, transparent 100%);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .chapter-text-panel {
+      padding: 32px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .chapter-num-tag {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chapter-num-tag::before {
+      content: "";
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    .chapter-title {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 34px);
+      letter-spacing: 0.05em;
+      color: #fff;
+      line-height: 1.05;
+    }
+
+    .chapter-body {
+      font-size: 15px;
+      color: #c2bbd6;
+      line-height: 1.7;
+    }
+
+    .chapter-body strong { color: #fff; }
+
+    .chapter-quote {
+      font-family: var(--font-typewriter);
+      font-size: 13px;
+      color: #ffd6de;
+      border-left: 2px solid var(--crimson);
+      padding: 8px 12px;
+      background: rgba(220, 20, 60, 0.06);
+      border-radius: 0 4px 4px 0;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    .chapter-accent-1 .chapter-num-tag { color: #79e2a6; }
+    .chapter-accent-2 .chapter-num-tag { color: var(--crimson); }
+    .chapter-accent-3 .chapter-num-tag { color: #ffbd2e; }
+    .chapter-accent-4 .chapter-num-tag { color: var(--cyan); }
+    .chapter-accent-5 .chapter-num-tag { color: var(--accent); }
+
+    @media (max-width: 820px) {
+      .chapter-item,
+      .chapter-item.reverse {
+        grid-template-columns: 1fr;
+        direction: ltr;
+      }
+      .chapter-img-panel { min-height: 220px; }
+      .chapter-text-panel { padding: 24px 20px; }
+      .chapter-number-overlay { font-size: 80px; }
+    }
+
+    /* ── Project Lore / Sketches Section ── */
+    section.lore-section {
+      padding: 50px 0 60px;
+      border-top: 1px solid var(--line);
+    }
+
+    .monsters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .monster-card {
+      background: rgba(18, 14, 28, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .monster-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 25px rgba(106, 61, 224, 0.25);
+    }
+
+    .monster-card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.1) brightness(0.9);
+      transition: filter 0.25s;
+    }
+
+    .monster-card:hover img {
+      filter: contrast(1.15) brightness(1.05);
+    }
+
+    .monster-info {
+      padding: 12px;
+    }
+
+    .monster-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--crimson);
+      letter-spacing: 0.08em;
+    }
+
+    .monster-name {
+      font-family: var(--font-display);
+      font-size: 20px;
+      letter-spacing: 0.05em;
+      color: #fff;
+      margin: 2px 0 4px;
+    }
+
+    .monster-desc {
+      font-size: 12px;
+      color: var(--fg-dim);
+      line-height: 1.4;
+    }
+
+    /* ── Specifications Cards ── */
+    .tech-specs-bar {
+      margin-top: 40px;
+      padding: 24px;
+      background: rgba(14, 10, 22, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .tech-item strong {
+      display: block;
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .tech-item p {
+      font-size: 13px;
+      color: var(--fg-dim);
+      line-height: 1.5;
+    }
+
+    /* ── Story Dossier Section ── */
+    section.story-dossier-section {
+      padding: 55px 0 65px;
+      border-top: 1px solid var(--line);
+      background: radial-gradient(circle at 85% 15%, rgba(220, 20, 60, 0.08) 0%, transparent 60%);
+    }
+
+    .dossier-sheet {
+      background: rgba(14, 10, 22, 0.85);
+      border: 1px solid rgba(169, 131, 255, 0.3);
+      border-radius: 10px;
+      padding: 34px 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dossier-stamp {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      border: 2px dashed #ff335c;
+      color: #ff335c;
+      padding: 6px 14px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      letter-spacing: 0.15em;
+      transform: rotate(4deg);
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .dossier-header-group {
+      max-width: 72ch;
+      margin-bottom: 24px;
+    }
+
+    .dossier-header-group h3 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4.5vw, 46px);
+      letter-spacing: 0.05em;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .dossier-header-group p {
+      font-size: 15px;
+      color: var(--fg-dim);
+      line-height: 1.6;
+    }
+
+    .story-timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .story-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    .story-card:hover {
+      border-color: var(--accent);
+      background: rgba(169, 131, 255, 0.06);
+      transform: translateY(-3px);
+    }
+
+    .story-card .card-step {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .story-card h4 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .story-card p {
+      font-size: 13px;
+      color: #c9c3da;
+      line-height: 1.55;
+    }
+
+    .quote-box-fe {
+      margin-top: 24px;
+      padding: 16px 20px;
+      border-left: 3px solid #ff335c;
+      background: rgba(220, 20, 60, 0.08);
+      border-radius: 0 6px 6px 0;
+      font-family: var(--font-typewriter);
+      font-size: 14px;
+      color: #ffd6de;
+    }
+
+    /* ── Footer ── */
+    footer.site-footer {
+      border-top: 1px solid var(--line);
+      padding: 30px 0;
+      background: #050408;
+      text-align: center;
+      font-size: 14px;
+      color: var(--fg-dim);
+    }
+
+    footer p {
+      margin-bottom: 6px;
+    }
+
+    footer a {
+      color: var(--accent);
+    }
+
+    /* Web Toast */
+    #toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      background: #140f22;
+      border: 1px solid var(--accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      padding: 10px 18px;
+      border-radius: 4px;
+      box-shadow: 0 0 25px rgba(169, 131, 255, 0.6);
+      transform: translateY(60px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #toast-msg.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Encabezado de Navegación -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="heartbeat-dot" aria-hidden="true"></span>
+        <span class="brand-title">FRECUENCIA</span>
+        <span class="brand-tag">PROYECTO F</span>
+      </div>
+
+      <button class="hamburger" id="hamburger-btn" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="header-nav" id="header-nav">
+        <a href="#cronologia" class="nav-link" title="Ver la historia completa">📖 Historia</a>
+        <a href="index.html" class="nav-link" title="Jugar la versión demo">🎮 Demo</a>
+        <a href="#calificacion" class="nav-link" title="Ir a la sección de calificación">📋 Calificar</a>
+        <a href="#lore" class="nav-link" title="Ver bocetos y arte">👾 Galería</a>
+        <a href="index.html" class="nav-btn-highlight">JUGAR AHORA ➔</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Principal -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span class="dot"></span>
+          <span>SANATORIO PSIQUIÁTRICO SAN CAYETANO · PROYECTO F</span>
+        </div>
+
+        <h1 class="hero-title">
+          DE MÉDICO A <span class="glitch-text">INTERNO</span>
+        </h1>
+
+        <p class="hero-desc">
+          Despiertas amnésico en la celda de aislamiento de un hospital psiquiátrico subterráneo. Tu bata médica fue cambiada por el uniforme de paciente <strong>EXP-742</strong>. Un experimento de reprogramación mental con frecuencias acústicas ha enloquecido a todo el asilo. Tu única ancla a la cordura: el dibujo arrugado de tu hija, <strong>Fe</strong>.
+        </p>
+
+        <div class="hero-quote">
+          "«Leías historiales clínicos. Firmabas altas y traslados. Antes de ser el paciente... tú eras el psiquiatra a cargo.» — Fragmento Clínico EXP-742"
+        </div>
+
+        <div class="hero-actions">
+          <a href="index.html" class="btn-main-demo">
+            <span>🎮 JUGAR DEMO EN LÍNEA</span>
+          </a>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform"
+             target="_blank" rel="noopener noreferrer" class="btn-main-form">
+            <span>⭐ CALIFICAR EN GOOGLE FORMS</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Cartel Promocional Oficial -->
+      <div class="hero-poster-frame">
+        <span class="poster-tape">PROYECTO F · 2026</span>
+        <img src="bocetos/poster_promocional.jpg" alt="Póster Promocional de Frecuencia"
+             onerror="this.style.display='none';document.getElementById('poster-fallback').style.display='flex'">
+        <div id="poster-fallback" style="display:none;align-items:center;justify-content:center;min-height:320px;background:linear-gradient(135deg,#0e0a16,#1a1028);font-size:80px;">🎮</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Los Dos Apartados Principales -->
+  <section class="portals-section" id="apartados">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pill">// ACCESOS PRINCIPALES</span>
+        <h2 class="section-title">ELIGE TU APARTADO</h2>
+      </div>
+
+      <div class="portals-grid">
+        <!-- APARTADO 1: DEMO EN LÍNEA -->
+        <article class="portal-card card-demo">
+          <div>
+            <span class="portal-badge badge-demo">● EN LÍNEA · JUGABLE</span>
+            <h3>🎮 DEMO DEL JUEGO</h3>
+            <p class="portal-desc">
+              Pruébalo directamente en tu navegador sin instalar nada. Avanza por las salas de la morgue, la perrera experimental y enfrenta al jefe disparando sincronizado con el ritmo musical.
+            </p>
+
+            <ul class="portal-features">
+              <li><span class="check-icon">✓</span> Motor Raycasting DDA hecho desde cero en Canvas 2D</li>
+              <li><span class="check-icon">✓</span> Síntesis de sonido procedural y beat-tracker generativo</li>
+              <li><span class="check-icon">✓</span> 7 clases de enemigos con inteligencia artificial FSM</li>
+              <li><span class="check-icon">✓</span> Soporte para teclado, ratón y gamepad con vibración</li>
+            </ul>
+          </div>
+
+          <div class="card-actions">
+            <a href="index.html" class="btn-card-launch btn-launch-demo">
+              <span>INICIAR DEMO EN LÍNEA ➔</span>
+            </a>
+            <a href="index.html" class="btn-card-secondary" title="Abrir en pestaña nueva" target="_blank">
+              <span>↗ Abrir en pestaña nueva</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- APARTADO 2: CALIFICACIÓN EN GOOGLE FORMS -->
+        <article class="portal-card card-form" id="calificacion">
+          <div>
+            <span class="portal-badge badge-form">★ FORMULARIO OFICIAL</span>
+            <h3>📋 CALIFICACIÓN DEL PROYECTO</h3>
+            <p class="portal-desc">
+              Tu opinión es esencial para evaluar el proyecto en la feria escolar. Califica la jugabilidad, la atmósfera de horror, la sincronización rítmica y comparte tus sugerencias con el autor.
+            </p>
+
+            <ul class="portal-features">
+              <li><span class="check-icon">✓</span> Evaluación rápida de 10 preguntas en Google Forms</li>
+              <li><span class="check-icon">✓</span> Respuestas seguras y recopiladas en tiempo real</li>
+              <li><span class="check-icon">✓</span> Secciones para jurados, docentes, estudiantes y gamers</li>
+              <li><span class="check-icon">✓</span> Opción para responder desde tu celular mediante QR</li>
+            </ul>
+          </div>
+
+          <div class="card-actions">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform"
+               target="_blank" rel="noopener noreferrer" class="btn-card-launch btn-launch-form">
+              <span>ABRIR GOOGLE FORMS ↗</span>
+            </a>
+
+            <div style="display: flex; gap: 8px;">
+              <button id="btn-toggle-embed" type="button" class="btn-card-secondary" style="flex: 1;">
+                <span>Ver Formulario Aquí ▾</span>
+              </button>
+              <button id="btn-show-qr" type="button" class="btn-card-secondary" style="flex: 1;">
+                <span>📱 Código QR Móvil</span>
+              </button>
+              <button id="btn-copy-link" type="button" class="btn-card-secondary" title="Copiar enlace">
+                <span>🔗 Copiar</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visor Opcional Embebido de Google Forms -->
+  <section id="seccion-formulario" style="display: none;">
+    <div class="container">
+      <div class="terminal-container">
+        <div class="terminal-header-bar">
+          <div class="terminal-controls">
+            <span class="dot-ctrl dot-red"></span>
+            <span class="dot-ctrl dot-yellow"></span>
+            <span class="dot-ctrl dot-green"></span>
+            <span class="terminal-id" style="margin-left: 8px;">TERMINAL_PROYECTO_F // GOOGLE_DOCS_FEEDBACK</span>
+          </div>
+          <div class="terminal-mode">● CONEXIÓN SEGURA SSL</div>
+        </div>
+
+        <div class="form-iframe-holder">
+          <iframe
+            id="google-form-iframe"
+            src="https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform?embedded=true"
+            title="Formulario de Evaluación de Frecuencia"
+            loading="lazy">
+            Cargando formulario de evaluación...
+          </iframe>
+        </div>
+
+        <div class="terminal-bottom-bar">
+          <span>¿Prefieres responder en pantalla completa?</span>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform"
+             target="_blank" rel="noopener noreferrer">
+            Abrir formulario oficial en Google Forms ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- EXPEDIENTE CLÍNICO: NARRATIVA "DE MÉDICO A INTERNO"        -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="story-dossier-section" id="historia">
+    <div class="container">
+      <div class="dossier-sheet">
+        <span class="dossier-stamp">INTERNACIÓN FORZADA · EXP-742</span>
+
+        <div class="dossier-header-group">
+          <span class="section-pill">// EXPEDIENTE PSIQUIÁTRICO CLASIFICADO</span>
+          <h3>LA CAÍDA DEL DR. IAN VANE: DE MÉDICO A INTERNO</h3>
+          <p>
+            En los niveles subterráneos del <strong>Sanatorio San Cayetano</strong>, la línea entre la cordura y el delirio fue destruida por un experimento bioacústico. Esta es la crónica de cómo el médico jefe terminó vistiendo la bata de los condenados.
+          </p>
+        </div>
+
+        <div class="story-timeline">
+          <div class="story-card">
+            <span class="card-step">PABELLÓN 01 · ANTECEDENTES</span>
+            <h4>1. El Psiquiatra y Fe</h4>
+            <p>
+              El Dr. Vane era la eminencia a cargo de las terapias acústicas del hospital. Su obsesión personal era descubrir una frecuencia capaz de curar el grave trastorno neurológico de su pequeña hija, <strong>Fe</strong>.
+            </p>
+          </div>
+
+          <div class="story-card">
+            <span class="card-step">PABELLÓN 02 · LA TRAICIÓN</span>
+            <h4>2. La Junta Médica</h4>
+            <p>
+              Sus colegas y el Cirujano Jefe pervirtieron la investigación, convirtiendo los metrónomos en instrumentos de lobotomía y control militar. Al negarse a colaborar, el Dr. Vane fue traicionado y silenciado.
+            </p>
+          </div>
+
+          <div class="story-card">
+            <span class="card-step">PABELLÓN 03 · EL ENCIERRO</span>
+            <h4>3. De Bata Blanca a EXP-742</h4>
+            <p>
+              Le diagnosticaron una falsa <em>psicosis delirante</em>, le arrebataron su licencia, le pusieron una bata de interno y lo encerraron en las celdas profundas de la morgue para borrarle la memoria con descargas sónicas.
+            </p>
+          </div>
+
+          <div class="story-card">
+            <span class="card-step">PABELLÓN 04 · EL COLAPSO</span>
+            <h4>4. El Despertar Amnésico</h4>
+            <p>
+              La máquina central sobrecargó, enloqueciendo a internos y celadores. El doctor despierta en la oscuridad con la mente en blanco; solo un pulso en sus sienes y el dibujo infantil de Fe lo guían hacia la salida.
+            </p>
+          </div>
+        </div>
+
+        <div class="quote-box-fe">
+          <strong>Fragmento de Memoria N° 3:</strong> «En el bolsillo de tu bata de paciente encuentras un dibujo en papel arrugado con crayón: <em>"Papá, vuelve pronto — Fe"</em>. No estás loco... te encerraron aquí para alejarte de ella.»
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CRÓNICA CINEMATOGRÁFICA: LA CAÍDA DEL DR. IAN VANE       -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="cinematic-story-section" id="cronologia">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pill">// CRÓNICA CLASIFICADA · PROYECTO F</span>
+        <h2 class="section-title">LA HISTORIA COMPLETA</h2>
+        <p style="color:var(--fg-dim);margin-top:10px;font-size:15px;max-width:56ch;margin-left:auto;margin-right:auto;">Cinco capítulos. Un médico. Una frecuencia que lo destruyó todo.</p>
+      </div>
+
+      <div class="chapter-list">
+
+        <!-- CAPÍTULO 1 -->
+        <article class="chapter-item chapter-accent-1">
+          <div class="chapter-img-panel">
+            <img src="bocetos/historia_01_psiquiatra.jpg"
+                 alt="Dr. Ian Vane investigando en su oficina subterránea"
+                 loading="lazy"
+                 onerror="this.parentElement.innerHTML='<div class=chapter-img-fallback>🔬</div>'">
+            <span class="chapter-number-overlay">01</span>
+            <span class="chapter-label-overlay">PABELLÓN 01 · ANTECEDENTES</span>
+          </div>
+          <div class="chapter-text-panel">
+            <span class="chapter-num-tag">CAPÍTULO 01 · EL PSIQUIATRA Y FE</span>
+            <h3 class="chapter-title">Un Padre Buscando la Cura</h3>
+            <p class="chapter-body">
+              El Dr. <strong>Ian Vane</strong> era la eminencia indiscutible del Sanatorio Psiquiátrico San Cayetano. Pionero en terapias acústicas, había dedicado décadas a estudiar cómo las frecuencias sonoras podían sanar la mente humana. Pero detrás del médico impecable vivía un padre desesperado.
+            </p>
+            <p class="chapter-body">
+              Su pequeña hija, <strong>Fe</strong>, padecía un grave trastorno neurológico degenerativo. Los tratamientos convencionales habían fallado. El Dr. Vane creía, con una certeza casi religiosa, que existía una frecuencia exacta capaz de recalibrar el sistema nervioso dañado. La buscaba cada noche en los laboratorios subterráneos, rodeado de ondas, osciloscopios y el dibujo arrugado de Fe pegado en su pizarrón.
+            </p>
+            <div class="chapter-quote">
+              «La ciencia me dijo que era imposible. Pero ningún padre acepta la palabra imposible cuando se trata de su hija.» — Diario del Dr. Vane, entrada #47
+            </div>
+          </div>
+        </article>
+
+        <!-- CAPÍTULO 2 -->
+        <article class="chapter-item chapter-accent-2 reverse">
+          <div class="chapter-img-panel">
+            <img src="bocetos/historia_02_junta.jpg"
+                 alt="La junta médica conspirando en sala de reuniones subterránea"
+                 loading="lazy"
+                 onerror="this.parentElement.innerHTML='<div class=chapter-img-fallback>🩺</div>'">
+            <span class="chapter-number-overlay">02</span>
+            <span class="chapter-label-overlay">PABELLÓN 02 · LA TRAICIÓN</span>
+          </div>
+          <div class="chapter-text-panel">
+            <span class="chapter-num-tag">CAPÍTULO 02 · LA JUNTA MÉDICA</span>
+            <h3 class="chapter-title">Cuando la Ciencia se Convierte en Arma</h3>
+            <p class="chapter-body">
+              La investigación del Dr. Vane llamó la atención de personas equivocadas. El <strong>Cirujano Jefe Aldren</strong> y un consorcio de inversores militares vieron en las frecuencias bioacústicas no una cura, sino una herramienta de control mental masivo.
+            </p>
+            <p class="chapter-body">
+              En reuniones secretas en los sótanos del hospital, pervirtieron la investigación de Vane. Los metrónomos terapéuticos fueron reconfigurados como instrumentos de lobotomía acústica. Cuando el Dr. Vane descubrió los planes y amenazó con destapar el experimento ante las autoridades, firmó su propia sentencia.
+            </p>
+            <div class="chapter-quote">
+              «Le pedí que reconsiderara. Me respondió firmando mi historial clínico como "paciente de alto riesgo".» — Fragmento de memoria EXP-742, recuperado
+            </div>
+          </div>
+        </article>
+
+        <!-- CAPÍTULO 3 -->
+        <article class="chapter-item chapter-accent-3">
+          <div class="chapter-img-panel">
+            <img src="bocetos/historia_03_encierro.jpg"
+                 alt="Dr. Vane siendo despojado de su bata médica"
+                 loading="lazy"
+                 onerror="this.parentElement.innerHTML='<div class=chapter-img-fallback>🔒</div>'">
+            <span class="chapter-number-overlay">03</span>
+            <span class="chapter-label-overlay">PABELLÓN 03 · EL ENCIERRO</span>
+          </div>
+          <div class="chapter-text-panel">
+            <span class="chapter-num-tag">CAPÍTULO 03 · DE BATA BLANCA A EXP-742</span>
+            <h3 class="chapter-title">El Médico se Convierte en Paciente</h3>
+            <p class="chapter-body">
+              En 48 horas fabricaron un historial completo. Le diagnosticaron una <em>psicosis delirante aguda de tipo paranoide</em>. Le arrebataron la licencia médica, vaciaron su oficina y lo trasladaron a la celda de aislamiento profundo en el nivel B-4, el más oscuro del sanatorio.
+            </p>
+            <p class="chapter-body">
+              La bata blanca fue reemplazada por el uniforme gris de paciente con la etiqueta <strong>EXP-742</strong>. Las descargas sónicas de baja frecuencia comenzaron esa misma noche: sesiones nocturnas diseñadas para borrar sistemáticamente sus recuerdos, empezando por su nombre y terminando por Fe.
+            </p>
+            <div class="chapter-quote">
+              «Un hombre puede sobrevivir al dolor. Lo que no soporta es olvidar por qué vale la pena sobrevivir.» — Nota hallada en la pared de la celda B-4
+            </div>
+          </div>
+        </article>
+
+        <!-- CAPÍTULO 4 -->
+        <article class="chapter-item chapter-accent-4 reverse">
+          <div class="chapter-img-panel">
+            <img src="bocetos/historia_04_colapso.jpg"
+                 alt="Explosión de la máquina acústica central ARCA-7"
+                 loading="lazy"
+                 onerror="this.parentElement.innerHTML='<div class=chapter-img-fallback>💥</div>'">
+            <span class="chapter-number-overlay">04</span>
+            <span class="chapter-label-overlay">PABELLÓN 04 · EL COLAPSO</span>
+          </div>
+          <div class="chapter-text-panel">
+            <span class="chapter-num-tag">CAPÍTULO 04 · EL DESPERTAR AMNÉSICO</span>
+            <h3 class="chapter-title">La Noche que Todo se Rompió</h3>
+            <p class="chapter-body">
+              La <strong>máquina central ARCA-7</strong>, sobrecargada durante una sesión clandestina de amplificación máxima, alcanzó una resonancia que superó todos los límites calculados. En lugar de borrar mentes, las fragmentó. En microsegundos, cada persona dentro del sanatorio recibió una descarga acústica letal para su cordura.
+            </p>
+            <p class="chapter-body">
+              Celadores, enfermeros, cirujanos y pacientes: todos colapsaron en cuestión de minutos. Los que no perdieron la conciencia perdieron la humanidad. El sanatorio se convirtió en un infierno silencioso donde solo se escuchaba el pulso residual de ARCA-7... y los pasos de algo que ya no era humano.
+            </p>
+            <div class="chapter-quote">
+              «Desperté en la oscuridad. No sabía mi nombre. No sabía por qué lloraba. Solo sabía que había algo en mi bolsillo que no debía soltar.» — Narración en juego, inicio del Pabellón 1
+            </div>
+          </div>
+        </article>
+
+        <!-- CAPÍTULO 5 -->
+        <article class="chapter-item chapter-accent-5">
+          <div class="chapter-img-panel">
+            <img src="bocetos/historia_05_escape.jpg"
+                 alt="EXP-742 caminando por el pasillo del sanatorio destruido con el dibujo de Fe"
+                 loading="lazy"
+                 onerror="this.parentElement.innerHTML='<div class=chapter-img-fallback>🚪</div>'">
+            <span class="chapter-number-overlay">05</span>
+            <span class="chapter-label-overlay">PABELLÓN 05 · LA MISIÓN</span>
+          </div>
+          <div class="chapter-text-panel">
+            <span class="chapter-num-tag">CAPÍTULO 05 · TÚ ERES EXP-742</span>
+            <h3 class="chapter-title">Encuentra la Salida. Vuelve por Fe.</h3>
+            <p class="chapter-body">
+              Aquí comienza el juego. No recuerdas tu nombre. No recuerdas tu pasado. Solo hay dos cosas que son reales: el pulso que golpea tus sienes como un metrónomo, y el dibujo en crayón que aprietas contra tu pecho donde una niña escribió <em>«Papá, vuelve pronto — Fe»</em>.
+            </p>
+            <p class="chapter-body">
+              Tienes que cruzar la morgue, la perrera experimental, los pabellones de cirugía y llegar al corazón de ARCA-7. Disparar en sincronía con el ritmo no es solo táctica: es la única forma de que las balas penetren la barrera de frecuencias que protege a los corrompidos. Si pierdes el ritmo... pierdes la cordura.
+            </p>
+            <div class="chapter-quote">
+              «No estás loco. Te encerraron aquí para alejarte de ella. Ahora eres el único que puede salir. El único que puede salvarla.» — Fragmento Clínico EXP-742, última página
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Galería de Arte & Enemigos (Lore del Proyecto F) -->
+  <section class="lore-section" id="lore">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pill">// ARCHIVOS DE INVESTIGACIÓN</span>
+        <h2 class="section-title">SUJETOS DE PRUEBA DEL PROYECTO F</h2>
+      </div>
+
+      <div class="monsters-grid">
+        <div class="monster-card">
+          <img src="bocetos/1_zombie_paciente.jpg" alt="Zombi Paciente" loading="lazy">
+          <div class="monster-info">
+            <span class="monster-tag">EXP-742</span>
+            <h4 class="monster-name">Paciente</h4>
+            <p class="monster-desc">Sujetos cuyas mentes colapsaron ante las frecuencias bajas.</p>
+          </div>
+        </div>
+
+        <div class="monster-card">
+          <img src="bocetos/2_perro_experimental.jpg" alt="Perro Experimental" loading="lazy">
+          <div class="monster-info">
+            <span class="monster-tag">EXP-109</span>
+            <h4 class="monster-name">Can Experimental</h4>
+            <p class="monster-desc">Veloces y agresivos. Esquívalos sincronizando al compás.</p>
+          </div>
+        </div>
+
+        <div class="monster-card">
+          <img src="bocetos/3_cirujano.jpg" alt="Cirujano Mutado" loading="lazy">
+          <div class="monster-info">
+            <span class="monster-tag">PERSONAL MÉDICO</span>
+            <h4 class="monster-name">Cirujano</h4>
+            <p class="monster-desc">Antiguos colegas poseídos por el núcleo rítmico.</p>
+          </div>
+        </div>
+
+        <div class="monster-card">
+          <img src="bocetos/4_camillero.jpg" alt="Camillero Mutado" loading="lazy">
+          <div class="monster-info">
+            <span class="monster-tag">SEGURIDAD</span>
+            <h4 class="monster-name">Camillero</h4>
+            <p class="monster-desc">Unidades pesadas que resisten impactos y flanquean.</p>
+          </div>
+        </div>
+
+        <div class="monster-card">
+          <img src="bocetos/5_corazon_jefe.jpg" alt="Corazón Biomecánico" loading="lazy">
+          <div class="monster-info">
+            <span class="monster-tag">NÚCLEO FINAL</span>
+            <h4 class="monster-name">El Corazón</h4>
+            <p class="monster-desc">La máquina central que emite las frecuencias destructivas.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ficha Técnica para Evaluadores -->
+      <div class="tech-specs-bar">
+        <div class="tech-grid">
+          <div class="tech-item">
+            <strong>Matemáticas en Canvas 2D</strong>
+            <p>Implementación pura del algoritmo DDA (Digital Differential Analyzer) para proyección de rayos en tiempo real.</p>
+          </div>
+          <div class="tech-item">
+            <strong>Música con Web Audio API</strong>
+            <p>Síntesis generativa de osciladores y filtros en tiempo real, sin pistas de audio pregrabadas pesadas.</p>
+          </div>
+          <div class="tech-item">
+            <strong>Despliegue Estático</strong>
+            <p>Optimizado para alojarse con cero costo en plataformas como Netlify, Vercel o GitHub Pages.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal / Popover con Código QR -->
+  <div id="qr-modal" class="qr-popover">
+    <div class="qr-modal-box">
+      <h4>ESCANEA DESDE TU MÓVIL</h4>
+      <p>Apunta la cámara de tu celular a este código QR para abrir y completar el formulario de Google Forms.</p>
+
+      <div class="qr-img-wrap">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fdocs.google.com%2Fforms%2Fd%2Fe%2F1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww%2Fviewform&color=120e1c&bgcolor=ffffff"
+             alt="Código QR de Google Forms">
+      </div>
+
+      <button id="btn-close-qr-modal" type="button" class="btn-close-modal">CERRAR CÓDIGO QR</button>
+    </div>
+  </div>
+
+  <!-- Pie de Página -->
+  <footer class="site-footer">
+    <style>
+      .footer-creator-card {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        background: rgba(18, 14, 30, 0.85);
+        border: 1px solid rgba(169, 131, 255, 0.25);
+        border-radius: 16px;
+        padding: 28px 36px;
+        margin: 18px auto 8px;
+        max-width: 480px;
+        width: 100%;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(169,131,255,0.08);
+        transition: box-shadow 0.3s ease;
+      }
+      .footer-creator-card:hover {
+        box-shadow: 0 14px 50px rgba(0,0,0,0.75), 0 0 30px rgba(169,131,255,0.18);
+      }
+      .footer-creator-name {
+        font-family: var(--font-display);
+        font-size: 28px;
+        letter-spacing: 0.08em;
+        color: #fff;
+        text-shadow: 0 0 18px rgba(169,131,255,0.5);
+      }
+      .footer-creator-msg {
+        font-family: var(--font-body);
+        font-size: 14px;
+        color: #b0a8c8;
+        line-height: 1.65;
+        text-align: center;
+        max-width: 36ch;
+      }
+      .footer-creator-msg em {
+        color: var(--accent);
+        font-style: normal;
+        font-weight: 600;
+      }
+      .footer-ig-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+        color: #fff;
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 30px;
+        text-decoration: none;
+        letter-spacing: 0.03em;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 18px rgba(253,29,29,0.35);
+      }
+      .footer-ig-btn:hover {
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 8px 28px rgba(253,29,29,0.55);
+        color: #fff;
+      }
+      .footer-divider {
+        width: 40px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(169,131,255,0.4), transparent);
+        margin: 4px 0;
+      }
+      .footer-bottom-links {
+        margin-top: 18px;
+        font-size: 13px;
+        color: var(--fg-dim);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px 16px;
+      }
+      .footer-bottom-links a { color: var(--accent); }
+      .footer-bottom-links a:hover { color: #fff; }
+    </style>
+
+    <div class="container" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+
+      <p style="font-family:var(--font-display);font-size:22px;letter-spacing:0.06em;color:#fff;margin-bottom:4px;">FRECUENCIA</p>
+      <p style="font-size:13px;color:var(--fg-dim);margin-bottom:20px;">Terror rítmico en primera persona · PROYECTO F · 2026</p>
+
+      <div class="footer-creator-card">
+        <p class="footer-creator-name">oni</p>
+        <div class="footer-divider"></div>
+        <p class="footer-creator-msg">
+          Después de romper la cabeza diseñando cada sala, cada frecuencia y cada fragmento de esta historia,
+          se creó este portal para que puedas <em>conocer la historia</em> y <em>calificar el proyecto</em>.
+          Si llegaste hasta aquí... ya eres parte del experimento. 🎧
+        </p>
+        <a href="https://www.instagram.com/car__doza"
+           target="_blank" rel="noopener noreferrer"
+           class="footer-ig-btn"
+           title="Seguir a @car__doza en Instagram">
+          <!-- Instagram SVG oficial -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+          @car__doza
+        </a>
+      </div>
+
+      <div class="footer-bottom-links">
+        <a href="index.html">🎮 Jugar Demo</a>
+        <span style="color:var(--line)">·</span>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform" target="_blank" rel="noopener noreferrer">⭐ Calificar Proyecto</a>
+        <span style="color:var(--line)">·</span>
+        <a href="#cronologia">📖 Historia</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <div id="toast-msg"></div>
+
+  <script>
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform';
+
+    const toastMsg = document.getElementById('toast-msg');
+    function showToast(text) {
+      if (!toastMsg) return;
+      toastMsg.textContent = text;
+      toastMsg.classList.add('show');
+      setTimeout(() => toastMsg.classList.remove('show'), 2500);
+    }
+
+    // Toggle para ver formulario embebido
+    const btnToggleEmbed = document.getElementById('btn-toggle-embed');
+    const seccionForm = document.getElementById('seccion-formulario');
+
+    btnToggleEmbed?.addEventListener('click', () => {
+      const isHidden = seccionForm.style.display === 'none';
+      seccionForm.style.display = isHidden ? 'block' : 'none';
+      btnToggleEmbed.querySelector('span').textContent = isHidden ? 'Ocultar Formulario ▴' : 'Ver Formulario Aquí ▾';
+      if (isHidden) {
+        seccionForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    // Copiar enlace
+    const btnCopyLink = document.getElementById('btn-copy-link');
+    btnCopyLink?.addEventListener('click', () => {
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(FORM_URL).then(() => {
+          showToast('✓ Enlace de Google Forms copiado al portapapeles');
+        }).catch(() => {
+          showToast('Enlace: ' + FORM_URL);
+        });
+      } else {
+        showToast('Enlace: ' + FORM_URL);
+      }
+    });
+
+    // Modal de Código QR
+    const qrModal = document.getElementById('qr-modal');
+    const btnShowQR = document.getElementById('btn-show-qr');
+    const btnCloseQR = document.getElementById('btn-close-qr-modal');
+
+    btnShowQR?.addEventListener('click', () => {
+      qrModal?.classList.add('active');
+    });
+
+    btnCloseQR?.addEventListener('click', () => {
+      qrModal?.classList.remove('active');
+    });
+
+    qrModal?.addEventListener('click', (e) => {
+      if (e.target === qrModal) {
+        qrModal.classList.remove('active');
+      }
+    });
+
+    // ── Menú hamburguesa responsive ──
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const headerNav = document.getElementById('header-nav');
+
+    hamburgerBtn?.addEventListener('click', () => {
+      const isOpen = headerNav.classList.toggle('open');
+      hamburgerBtn.classList.toggle('open', isOpen);
+      hamburgerBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Cerrar nav al hacer clic en un enlace (mobile)
+    headerNav?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        headerNav.classList.remove('open');
+        hamburgerBtn.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -36,7 +36,7 @@ export class InputManager {
   setupListeners() {
     if (typeof window === 'undefined') return;
     window.addEventListener('keydown', e => {
-      if (e.target && e.target.tagName === 'INPUT') return;
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable)) return;
       if (BLOCK_KEYS[e.code]) e.preventDefault();
       if (e.repeat) {
         this.keys[e.code] = true;

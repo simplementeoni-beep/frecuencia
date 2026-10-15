@@ -1,35 +1,43 @@
-# Dependencias / paquetes
+# ── Dependencias ──────────────────────────────
 node_modules/
 .npm/
 
-# Archivos de sistema
+# ── Archivos de sistema ────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Borradores y bocetos (archivos de trabajo)
+# ── Archivos de trabajo PRIVADOS (se quedan en PC) ──
 borrador/
-bocetos/
+scripts/
+DIAGRAMA_DE_FLUJO.md
+diagrama_flujo.html
+diagrama_flujo.svg
+Auidos/
 
-# Archivos de audio grandes (opcionales — descomenta si los quieres excluir)
-# audio/
-# Auidos/
-
-# Logs
+# ── Logs ──────────────────────────────────────
 *.log
 npm-debug.log*
 
-# Variables de entorno
+# ── Variables de entorno ───────────────────────
 .env
 .env.local
 .env.*.local
 
-# Editor
+# ── Editor ────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Build (por si se añade bundler en el futuro)
+# ── Build futuro ──────────────────────────────
 dist/
 build/
+
+# ── Lo que SÍ se sube (referencia) ────────────
+# index.html      ✓ demo del juego
+# portal.html     ✓ portal de feria
+# bocetos/        ✓ imágenes del portal
+# js/             ✓ motor del juego
+# audio/          ✓ sonidos del juego
+# netlify.toml    ✓ configuración de deploy
