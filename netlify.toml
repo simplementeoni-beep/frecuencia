@@ -1,11 +1,6 @@
 [build]
   publish = "."
 
-[[redirects]]
-  from = "/"
-  to = "/portal.html"
-  status = 200
-
 [[headers]]
   for = "/*"
   [headers.values]

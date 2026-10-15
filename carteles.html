@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pósters Oficiales · FRECUENCIA (Para Imprimir y Stand)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #07060a;
+      --card-bg: #0f0d17;
+      --accent-red: #ff2a4b;
+      --accent-purple: #9d4edd;
+      --accent-cyan: #00f0ff;
+      --text-main: #f0edf6;
+      --text-muted: #9990aa;
+      --border-red: rgba(255, 42, 75, 0.4);
+      --border-purple: rgba(157, 78, 221, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050408;
+      color: var(--text-main);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* BARRA SUPERIOR DE HERRAMIENTAS (SE OCULTA AL IMPRIMIR) */
+    .toolbar {
+      position: sticky;
+      top: 15px;
+      z-index: 1000;
+      background: rgba(15, 13, 23, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1000px;
+      width: 100%;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 20px rgba(157, 78, 221, 0.2);
+    }
+
+    .toolbar-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar-title span {
+      color: var(--accent-red);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, var(--accent-red), #b30024);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 42, 75, 0.4);
+    }
+
+    .btn-print:hover {
+      background: linear-gradient(135deg, #ff4d6d, #d90429);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 42, 75, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ddd;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .toolbar-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      width: 100%;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+
+    /* CONTENEDOR DE PÓSTERS */
+    .posters-container {
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* ESTRUCTURA BASE DE UN PÓSTER (TAMAÑO A4 / POSTER PROPORCIÓN 1 : 1.414) */
+    .poster-sheet {
+      width: 100%;
+      max-width: 794px; /* A4 a 96 DPI aprox */
+      aspect-ratio: 1 / 1.414;
+      background: #09070f;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* =========================================================
+       CARTEL 1: PÓSTER CINEMATOGRÁFICO OFICIAL
+       ========================================================= */
+    .poster-cinema {
+      background: radial-gradient(circle at 50% 20%, #1c0f2a 0%, #08060d 70%);
+      color: #fff;
+    }
+
+    .poster-cinema .bg-hero {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 65%;
+      object-fit: cover;
+      object-position: center top;
+      opacity: 0.85;
+      mix-blend-mode: luminosity;
+      filter: contrast(1.2) brightness(0.9);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+      z-index: 1;
+    }
+
+    .poster-cinema .tint-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 65%;
+      background: linear-gradient(180deg, rgba(157, 78, 221, 0.25) 0%, rgba(255, 42, 75, 0.15) 50%, rgba(9, 7, 15, 1) 100%);
+      z-index: 2;
+    }
+
+    .poster-cinema .vignette {
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.85);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .poster-cinema .content {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 45px 35px 45px;
+    }
+
+    /* Top metadata */
+    .poster-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 12px;
+    }
+
+    .confidential-tag {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: var(--accent-red);
+      background: rgba(255, 42, 75, 0.12);
+      border: 1px solid var(--accent-red);
+      padding: 3px 10px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .fair-tag {
+      font-family: 'Special Elite', monospace;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: #bbb;
+    }
+
+    /* Middle / Title block */
+    .poster-cinema-body {
+      margin-top: auto;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .tagline-top {
+      font-family: 'Special Elite', monospace;
+      font-size: 15px;
+      letter-spacing: 4px;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    .cinema-main-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 96px;
+      line-height: 0.88;
+      letter-spacing: 12px;
+      color: #ffffff;
+      text-shadow: 0 0 30px rgba(255, 42, 75, 0.6), 0 5px 25px rgba(0,0,0,0.9);
+      margin-bottom: 8px;
+    }
+
+    .cinema-sub-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 8px;
+      color: #d1b8ff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(157, 78, 221, 0.6);
+    }
+
+    .cinema-synopsis {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cbc5db;
+      max-width: 580px;
+      margin: 0 auto 25px auto;
+      font-weight: 400;
+    }
+
+    .cinema-pills {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .cinema-pill {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+    }
+
+    /* Movie billing / credits block */
+    .billing-block {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 18px;
+      text-align: center;
+    }
+
+    .billing-row-1 {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #9f96b3;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .billing-row-1 strong {
+      color: #fff;
+    }
+
+    .billing-row-creator {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 5px;
+      color: #ff3366;
+      margin-bottom: 6px;
+    }
+
+    .billing-row-creator span {
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .billing-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #7b738e;
+      font-family: 'Special Elite', monospace;
+    }
+
+    .billing-meta a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* =========================================================
+       CARTEL 2: PÓSTER PROMOCIONAL CON CÓDIGO QR PARA STAND
+       ========================================================= */
+    .poster-stand {
+      background: linear-gradient(175deg, #140d21 0%, #08060e 50%, #160713 100%);
+      color: #fff;
+      border: 2px solid rgba(255, 42, 75, 0.35);
+    }
+
+    .poster-stand::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: repeating-linear-gradient(45deg, #ff2a4b, #ff2a4b 15px, #000 15px, #000 30px);
+      z-index: 20;
+    }
+
+    .poster-stand::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: repeating-linear-gradient(45deg, #ff2a4b, #ff2a4b 15px, #000 15px, #000 30px);
+      z-index: 20;
+    }
+
+    .stand-content {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 40px 30px 40px;
+      text-align: center;
+    }
+
+    /* Stand Header */
+    .stand-header {
+      margin-top: 10px;
+    }
+
+    .stand-badge-top {
+      display: inline-block;
+      background: rgba(255, 42, 75, 0.15);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red);
+      font-family: 'Special Elite', monospace;
+      font-size: 14px;
+      letter-spacing: 3px;
+      padding: 4px 16px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .stand-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 68px;
+      line-height: 0.92;
+      letter-spacing: 5px;
+      color: #fff;
+      margin-bottom: 6px;
+      text-shadow: 0 0 25px rgba(255, 42, 75, 0.5);
+    }
+
+    .stand-headline span {
+      color: var(--accent-red);
+    }
+
+    .stand-subhead {
+      font-size: 15px;
+      letter-spacing: 2px;
+      color: #c7beea;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* STAND QR HERO SECTION */
+    .stand-qr-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px dashed rgba(157, 78, 221, 0.5);
+      border-radius: 20px;
+      padding: 25px;
+      margin: 15px auto;
+      max-width: 520px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(157, 78, 221, 0.1);
+    }
+
+    .qr-frame {
+      background: #ffffff;
+      padding: 18px;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.35), 0 15px 30px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .qr-img {
+      width: 230px;
+      height: 230px;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    .qr-url-badge {
+      margin-top: 16px;
+      background: #000;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+      letter-spacing: 2px;
+      padding: 6px 20px;
+      border-radius: 6px;
+      display: inline-block;
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+    }
+
+    .qr-feature-tag {
+      margin-top: 10px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: #00ffaa;
+      text-transform: uppercase;
+    }
+
+    /* 3 INSTRUCTION STEPS */
+    .stand-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 10px 0 18px 0;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: var(--accent-red);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .step-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .step-desc {
+      font-size: 11px;
+      color: #a49cb5;
+      line-height: 1.3;
+    }
+
+    /* MINI GALLERY THUMBNAILS */
+    .stand-gallery-strip {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stand-thumb {
+      width: 75px;
+      height: 75px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .stand-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .stand-thumb span {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.8);
+      font-size: 8px;
+      letter-spacing: 1px;
+      padding: 2px 0;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #ff4d6d;
+    }
+
+    /* STAND FOOTER */
+    .stand-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stand-creator-box {
+      text-align: left;
+    }
+
+    .stand-creator-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .stand-creator-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 3px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .stand-creator-name span {
+      color: var(--accent-red);
+    }
+
+    .stand-creator-ig {
+      font-family: 'Special Elite', monospace;
+      font-size: 13px;
+      color: #ff3366;
+      font-weight: bold;
+    }
+
+    .stand-fair-box {
+      text-align: right;
+    }
+
+    .stand-fair-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .stand-fair-desc {
+      font-size: 11px;
+      color: #8c849e;
+    }
+
+    /* =========================================================
+       REGLAS ESTRICTAS PARA IMPRESIÓN / GUARDAR COMO PDF
+       ========================================================= */
+    @media print {
+      body {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .toolbar {
+        display: none !important;
+      }
+
+      .posters-container {
+        gap: 0 !important;
+        width: 100% !important;
+      }
+
+      .poster-sheet {
+        max-width: 100% !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        aspect-ratio: auto !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE ACCIÓN Y CONTROLES (SE OCULTA AL IMPRIMIR) -->
+  <header class="toolbar">
+    <div class="toolbar-title">
+      🎮 PÓSTERS DE STAND · <span>FRECUENCIA</span>
+    </div>
+    <div class="toolbar-actions">
+      <a href="portal.html" class="btn btn-secondary">
+        ← Volver al Portal
+      </a>
+      <button onclick="window.print()" class="btn btn-print">
+        🖨️ Imprimir / Guardar PDF
+      </button>
+    </div>
+    <div class="toolbar-info">
+      💡 <strong>Consejo para imprimir:</strong> En la ventana de impresión, selecciona <em>"Guardar como PDF"</em> o tu impresora, activa la casilla <strong>"Gráficos de fondo"</strong> y pon márgenes en <em>"Ninguno"</em> para obtener el acabado perfecto a pantalla completa.
+    </div>
+  </header>
+
+  <main class="posters-container">
+
+    <!-- =========================================================
+         CARTEL 1: PÓSTER CINEMATOGRÁFICO OFICIAL DEL PROYECTO
+         ========================================================= -->
+    <article class="poster-sheet poster-cinema" id="cartel-cinema">
+      <img src="bocetos/poster_promocional.jpg" alt="Póster Promocional Frecuencia" class="bg-hero">
+      <div class="tint-overlay"></div>
+      <div class="vignette"></div>
+
+      <div class="content">
+        <!-- Barra superior clasificada -->
+        <div class="poster-top-bar">
+          <span class="confidential-tag">EXPEDIENTE SECRETO · NIVEL -4</span>
+          <span class="fair-tag">DEMOSTRACIÓN EDUCATIVA · FERIA 2026</span>
+        </div>
+
+        <!-- Cuerpo del título -->
+        <div class="poster-cinema-body">
+          <p class="tagline-top">EN LA OSCURIDAD, EL RITMO ES TU ÚNICO LATIDO</p>
+          <h1 class="cinema-main-title">FRECUENCIA</h1>
+          <h2 class="cinema-sub-title">EL SILENCIO DE LOS PASILLOS</h2>
+          
+          <p class="cinema-synopsis">
+            Un prestigioso psiquiatra recluido como sujeto de pruebas en el complejo subterráneo del Proyecto F. 
+            Entre criaturas biológicas mutadas y pasillos sumidos en sombras, la única salida es sintonizar la señal 
+            antes de que el corazón artificial termine de colapsar.
+          </p>
+
+          <div class="cinema-pills">
+            <span class="cinema-pill">TERROR EN PRIMERA PERSONA</span>
+            <span class="cinema-pill">MECÁNICA DE COMBATE RÍTMICO</span>
+            <span class="cinema-pill">IA POR ESTADOS DE ALERTA</span>
+          </div>
+        </div>
+
+        <!-- Créditos estilo cinematográfico -->
+        <div class="billing-block">
+          <div class="billing-row-creator">
+            <span>UN PROYECTO CREADO POR</span> ONI <span>· DISEÑO & DIRECCIÓN</span>
+          </div>
+          <p class="billing-row-1">
+            DESARROLLO DE SOFTWARE EN <strong>CANVAS HTML5 & JAVASCRIPT VANILLA</strong> · ARTE CONCEPTUAL PROCEDURAL<br>
+            SISTEMA DE ILUMINACIÓN POR RAYCASTING · COMPOSICIÓN SONORA ADAPTATIVA DINÁMICA
+          </p>
+          <div class="billing-meta">
+            <span>INSTAGRAM OFICIAL: <a href="https://www.instagram.com/car__doza" target="_blank">@car__doza</a></span>
+            <span>DEMO OFICIAL: <a href="https://frecuenciaoficial.netlify.app/" target="_blank">frecuenciaoficial.netlify.app</a></span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+
+    <!-- =========================================================
+         CARTEL 2: PÓSTER PROMOCIONAL PARA STAND CON CÓDIGO QR
+         ========================================================= -->
+    <article class="poster-sheet poster-stand" id="cartel-stand">
+      <div class="stand-content">
+        
+        <!-- Encabezado del Stand -->
+        <div class="stand-header">
+          <span class="stand-badge-top">STAND DE DEMOSTRACIÓN · FERIA CIENTÍFICA</span>
+          <h2 class="stand-headline">¡PRUEBA LA DEMO <span>AHORA!</span></h2>
+          <p class="stand-subhead">EXPERIMENTA EL HORROR PSICOLÓGICO EN TU NAVEGADOR</p>
+        </div>
+
+        <!-- Cuadro Central con Código QR -->
+        <div class="stand-qr-box">
+          <div class="qr-frame">
+            <img src="bocetos/qr_frecuencia.png" alt="Código QR para jugar la Demo" class="qr-img">
+          </div>
+          <div class="qr-url-badge">frecuenciaoficial.netlify.app</div>
+          <p class="qr-feature-tag">⚡ 100% GRATIS · SIN DESCARGAR NADA · JUEGA AL INSTANTE</p>
+        </div>
+
+        <!-- 3 Pasos de Instrucción para los visitantes -->
+        <div class="stand-steps">
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <div class="step-title">ESCANEA</div>
+            <p class="step-desc">Apunta con la cámara de tu celular al código QR.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <div class="step-title">JUEGA</div>
+            <p class="step-desc">Sobrevive a los pasillos subterráneos y esquiva las criaturas.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">03</div>
+            <div class="step-title">DESCUBRE</div>
+            <p class="step-desc">Conoce la historia completa clasificada y califica la experiencia.</p>
+          </div>
+        </div>
+
+        <!-- Tira de Miniaturas de Criaturas para crear intriga -->
+        <div class="stand-gallery-strip">
+          <div class="stand-thumb">
+            <img src="bocetos/1_zombie_paciente.jpg" alt="El Paciente">
+            <span>Paciente</span>
+          </div>
+          <div class="stand-thumb">
+            <img src="bocetos/3_cirujano.jpg" alt="El Cirujano">
+            <span>Cirujano</span>
+          </div>
+          <div class="stand-thumb">
+            <img src="bocetos/2_perro_experimental.jpg" alt="El Sabueso">
+            <span>Sabueso</span>
+          </div>
+          <div class="stand-thumb">
+            <img src="bocetos/5_corazon_jefe.jpg" alt="El Corazón">
+            <span>Núcleo F</span>
+          </div>
+        </div>
+
+        <!-- Pie de página del Stand con Creador e Instagram -->
+        <div class="stand-footer">
+          <div class="stand-creator-box">
+            <div class="stand-creator-label">Desarrollado y Creado por:</div>
+            <div class="stand-creator-name">ONI <span>/</span> PROYECTO F</div>
+            <div class="stand-creator-ig">Instagram: @car__doza</div>
+          </div>
+          <div class="stand-fair-box">
+            <div class="stand-fair-title">PROYECTO DE INNOVACIÓN Y TECNOLOGÍA</div>
+            <div class="stand-fair-desc">Demostración interactiva de desarrollo independiente</div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FRECUENCIA · Teaser Demo Móvil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=VT323&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #050408;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #040306;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* EFECTO DE SCANLINES Y VIÑETA */
+    .crt-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 60%, rgba(0, 0, 0, 0.85) 100%),
+                  repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 3px);
+      z-index: 10;
+    }
+
+    /* HUD SUPERIOR */
+    .hud-top {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .hud-badge {
+      background: rgba(12, 10, 18, 0.85);
+      border: 1px solid rgba(255, 42, 75, 0.4);
+      border-radius: 6px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: #ff3366;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .hud-battery {
+      background: rgba(12, 10, 18, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: #00f0ff;
+    }
+
+    .hud-center-msg {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #e2dbf5;
+      pointer-events: none;
+      z-index: 20;
+      text-align: center;
+      max-width: 90%;
+      transition: opacity 0.3s ease;
+    }
+
+    /* CONTROLES TÁCTILES EN PANTALLA */
+    .touch-controls {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 20px;
+    }
+
+    /* D-PAD VIRTUAL TÁCTIL (IZQUIERDA) */
+    .dpad-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      pointer-events: auto;
+    }
+
+    .dpad-btn {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      active: scale(0.92);
+    }
+
+    .dpad-btn:active, .dpad-btn.active {
+      background: rgba(255, 42, 75, 0.5);
+      border-color: #ff2a4b;
+      transform: scale(0.92);
+    }
+
+    .dpad-up { top: 0; left: 48px; }
+    .dpad-down { bottom: 0; left: 48px; }
+    .dpad-left { top: 48px; left: 0; }
+    .dpad-right { top: 48px; right: 0; }
+    .dpad-center {
+      position: absolute;
+      top: 48px;
+      left: 48px;
+      width: 44px;
+      height: 44px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+
+    /* BOTONES DE ACCIÓN (DERECHA) */
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .action-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(18, 14, 28, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      transition: all 0.1s ease;
+      cursor: pointer;
+    }
+
+    .action-btn:active, .action-btn.active {
+      transform: scale(0.92);
+    }
+
+    .action-btn-tune {
+      border-color: #00f0ff;
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.15);
+    }
+    .action-btn-tune:active {
+      background: rgba(0, 240, 255, 0.4);
+    }
+
+    .action-btn-flash {
+      border-color: #ffd166;
+      color: #ffd166;
+      background: rgba(255, 209, 102, 0.15);
+    }
+
+    .action-btn-run {
+      border-color: #ff2a4b;
+      color: #ff2a4b;
+      background: rgba(255, 42, 75, 0.15);
+    }
+
+    .action-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .action-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+
+    /* PANTALLA INICIAL (TAP TO START / ACTIVAR AUDIO) */
+    .start-screen {
+      position: absolute;
+      inset: 0;
+      background: rgba(7, 5, 12, 0.94);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .start-badge {
+      font-family: 'Special Elite', monospace;
+      color: #ff2a4b;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    .start-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 54px;
+      letter-spacing: 6px;
+      color: #fff;
+      line-height: 0.95;
+      margin-bottom: 6px;
+      text-shadow: 0 0 20px rgba(255, 42, 75, 0.6);
+    }
+
+    .start-subtitle {
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #9d4edd;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .start-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 380px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #c9c1dc;
+      margin-bottom: 28px;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #ff2a4b, #b30024);
+      color: #fff;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(255, 42, 75, 0.5);
+      transition: transform 0.1s ease;
+    }
+
+    .btn-start:active {
+      transform: scale(0.95);
+    }
+
+    .start-credits {
+      margin-top: 25px;
+      font-size: 11px;
+      color: #7b738f;
+      font-family: 'Special Elite', monospace;
+    }
+
+    /* PANTALLA FINAL / CLIFFHANGER */
+    .ending-screen {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 4, 8, 0.96);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+      text-align: center;
+      animation: glitchFade 0.6s ease forwards;
+    }
+
+    @keyframes glitchFade {
+      0% { opacity: 0; transform: scale(1.05); filter: contrast(2); }
+      100% { opacity: 1; transform: scale(1); filter: contrast(1); }
+    }
+
+    .ending-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 46px;
+      letter-spacing: 4px;
+      color: #ff2a4b;
+      margin-bottom: 6px;
+      text-shadow: 0 0 25px rgba(255, 42, 75, 0.8);
+    }
+
+    .ending-teaser {
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #00f0ff;
+      margin-bottom: 18px;
+    }
+
+    .ending-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 42, 75, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 440px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #d8d0ec;
+      margin-bottom: 24px;
+    }
+
+    .ending-card strong {
+      color: #fff;
+    }
+
+    .ending-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-end {
+      padding: 13px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-end-primary {
+      background: linear-gradient(135deg, #ff2a4b, #c90029);
+      color: #fff;
+      box-shadow: 0 5px 20px rgba(255, 42, 75, 0.5);
+    }
+
+    .btn-end-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .ending-creator {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #8b839f;
+    }
+
+    .ending-creator a {
+      color: #ff3366;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* BARRA DE FRECUENCIA EN SINTONIZACIÓN */
+    .tuning-overlay {
+      position: absolute;
+      bottom: 170px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #00f0ff;
+      border-radius: 10px;
+      padding: 10px 18px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 40;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+
+    .tuning-bar-bg {
+      width: 180px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .tuning-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #00f0ff;
+      transition: width 0.05s linear;
+    }
+
+    .tuning-text {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      color: #00f0ff;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    <div class="crt-overlay"></div>
+
+    <!-- HUD SUPERIOR -->
+    <div class="hud-top">
+      <div class="hud-badge" id="signal-badge">
+        <span>📻 SEÑAL:</span> <strong id="signal-count">0 / 3</strong>
+      </div>
+      <div class="hud-battery" id="battery-badge">
+        🔦 100%
+      </div>
+    </div>
+
+    <div class="hud-center-msg" id="hud-msg">
+      Encuentra y sintoniza los 3 repetidores de radio
+    </div>
+
+    <!-- BARRA FLOTANTE DE SINTONIZACIÓN -->
+    <div class="tuning-overlay" id="tuning-box">
+      <div class="tuning-text" id="tuning-label">SINTONIZANDO SEÑAL...</div>
+      <div class="tuning-bar-bg">
+        <div class="tuning-bar-fill" id="tuning-progress"></div>
+      </div>
+    </div>
+
+    <!-- CONTROLES TÁCTILES MÓVILES -->
+    <div class="touch-controls">
+      <!-- D-Pad Virtual a la izquierda -->
+      <div class="dpad-container" id="dpad">
+        <div class="dpad-btn dpad-up" data-dir="up">▲</div>
+        <div class="dpad-btn dpad-left" data-dir="left">◀</div>
+        <div class="dpad-center"></div>
+        <div class="dpad-btn dpad-right" data-dir="right">▶</div>
+        <div class="dpad-btn dpad-down" data-dir="down">▼</div>
+      </div>
+
+      <!-- Botones de Acción a la derecha -->
+      <div class="action-buttons">
+        <button class="action-btn action-btn-tune" id="btn-tune" title="Sintonizar Radio">
+          <span class="action-icon">📻</span>
+          <span class="action-label">Sintonizar</span>
+        </button>
+        <button class="action-btn action-btn-flash" id="btn-flash" title="Linterna On/Off">
+          <span class="action-icon">🔦</span>
+          <span class="action-label">Linterna</span>
+        </button>
+        <button class="action-btn action-btn-run" id="btn-run" title="Correr">
+          <span class="action-icon">⚡</span>
+          <span class="action-label">Correr</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PANTALLA DE INICIO (ACTIVACIÓN DE AUDIO Y PERMISOS TÁCTILES) -->
+    <div class="start-screen" id="start-screen">
+      <div class="start-badge">MUESTRA EXPERIMENTAL PARA MÓVILES</div>
+      <h1 class="start-title">FRECUENCIA</h1>
+      <h2 class="start-subtitle">TEASER INTERACTIVO · PROYECTO F</h2>
+      
+      <div class="start-box">
+        Estás atrapado en el sector subterráneo -4. Tu única herramienta es una linterna y un receptor de frecuencia.
+        <br><br>
+        <strong>Misión:</strong> Explora los pasillos, evita a las criaturas que acechan en las sombras y sintoniza los <strong>3 repetidores</strong>.
+      </div>
+
+      <button class="btn-start" id="btn-start-game">
+        INICIAR MUESTRA ➔
+      </button>
+
+      <div class="start-credits">
+        Creado por ONI · Instagram: @car__doza
+      </div>
+    </div>
+
+    <!-- PANTALLA FINAL CLIFFHANGER (CUANDO TERMINA LA DEMO) -->
+    <div class="ending-screen" id="ending-screen">
+      <div class="ending-title" id="ending-headline">SEÑAL INTERRUMPIDA...</div>
+      <div class="ending-teaser">ESTO ES SOLO UNA MUESTRA DEL PROYECTO F</div>
+
+      <div class="ending-card">
+        <p>
+          Has experimentado una pequeña porción del hospital subterráneo en tu teléfono.
+        </p>
+        <br>
+        <p>
+          <strong>¿Podrás sobrevivir al horror real?</strong><br>
+          El juego completo — con las 5 criaturas (el Cirujano, el Sabueso, el Corazón Biomecánico), combate rítmico, armas y la historia definitiva — 
+          está esperándote en la <strong>computadora del Stand de la Feria</strong>.
+        </p>
+      </div>
+
+      <div class="ending-actions">
+        <a href="index.html" class="btn-end btn-end-primary">
+          📖 Conocer la Historia en el Portal
+        </a>
+        <button class="btn-end btn-end-secondary" id="btn-replay">
+          🔄 Volver a Probar la Demo
+        </button>
+      </div>
+
+      <div class="ending-creator">
+        Proyecto por ONI · Sígueme en Instagram: <a href="https://www.instagram.com/car__doza" target="_blank">@car__doza</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // SISTEMA DE AUDIO PROCEDURAL (CERO DESCARGAS, INSTANTÁNEO EN MÓVILES)
+    // ============================================================
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.droneOsc = null;
+        this.droneGain = null;
+        this.heartbeatTimer = null;
+        this.isMuted = false;
+      }
+
+      init() {
+        if (this.ctx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioContext();
+
+        // Drone atmosférico de hospital
+        this.droneOsc = this.ctx.createOscillator();
+        this.droneGain = this.ctx.createGain();
+        this.droneOsc.type = 'triangle';
+        this.droneOsc.frequency.setValueAtTime(58, this.ctx.currentTime); // Low hum
+        this.droneGain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        this.droneOsc.connect(this.droneGain);
+        this.droneGain.connect(this.ctx.destination);
+        this.droneOsc.start();
+      }
+
+      playHeartbeat(rate = 1.0) {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(80, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.12);
+        
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.14);
+        
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.15);
+      }
+
+      playStatic(duration = 0.3) {
+        if (!this.ctx) return;
+        const bufferSize = this.ctx.sampleRate * duration;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        noise.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start();
+      }
+
+      playTuneTone(success = false) {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = success ? 'sine' : 'sawtooth';
+        osc.frequency.setValueAtTime(success ? 440 : 220, this.ctx.currentTime);
+        if (success) {
+          osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.3);
+        }
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.36);
+      }
+
+      playScreech() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.42);
+      }
+    }
+
+    const audio = new SoundEngine();
+
+    // ============================================================
+    // ESTADO DEL JUEGO Y MAPA
+    // ============================================================
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Mapa de bloques (1 = Pared, 0 = Pasillo)
+    const TILE_SIZE = 60;
+    const map = [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,0,1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1],
+      [1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,1],
+      [1,0,1,1,1,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1],
+      [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+      [1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,0,1],
+      [1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1],
+      [1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
+      [1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1],
+      [1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1],
+      [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+
+    const MAP_ROWS = map.length;
+    const MAP_COLS = map[0].length;
+
+    // Estado del Jugador
+    const player = {
+      x: 1.5 * TILE_SIZE,
+      y: 1.5 * TILE_SIZE,
+      radius: 14,
+      angle: 0,
+      speed: 2.8,
+      runSpeed: 4.5,
+      isRunning: false,
+      stamina: 100,
+      flashlightOn: true,
+      battery: 100
+    };
+
+    // Repetidores de Radio (Objetivos)
+    const relays = [
+      { id: 1, x: 8.5 * TILE_SIZE, y: 3.5 * TILE_SIZE, tuned: false, freq: '88.5 MHz' },
+      { id: 2, x: 14.5 * TILE_SIZE, y: 7.5 * TILE_SIZE, tuned: false, freq: '104.2 MHz' },
+      { id: 3, x: 3.5 * TILE_SIZE, y: 9.5 * TILE_SIZE, tuned: false, freq: '108.0 MHz' }
+    ];
+
+    // Criatura / Enemigo ("Sujeto 09")
+    const monster = {
+      x: 11.5 * TILE_SIZE,
+      y: 7.5 * TILE_SIZE,
+      radius: 16,
+      speed: 1.8,
+      chaseSpeed: 3.4,
+      state: 'patrol', // patrol, chase, search
+      patrolIndex: 0,
+      patrolPoints: [
+        { x: 11.5 * TILE_SIZE, y: 7.5 * TILE_SIZE },
+        { x: 11.5 * TILE_SIZE, y: 3.5 * TILE_SIZE },
+        { x: 16.5 * TILE_SIZE, y: 3.5 * TILE_SIZE },
+        { x: 16.5 * TILE_SIZE, y: 9.5 * TILE_SIZE },
+        { x: 7.5 * TILE_SIZE, y: 9.5 * TILE_SIZE }
+      ],
+      alertTimer: 0
+    };
+
+    // Entradas táctiles / teclado
+    const keys = { up: false, down: false, left: false, right: false };
+    let isTuning = false;
+    let tuningProgress = 0;
+    let activeRelayNear = null;
+    let tunedCount = 0;
+    let gameActive = false;
+    let heartbeatInterval = null;
+
+    // ============================================================
+    // CONTROLES TÁCTILES Y EVENTOS
+    // ============================================================
+    const dpadButtons = document.querySelectorAll('.dpad-btn');
+    dpadButtons.forEach(btn => {
+      const dir = btn.dataset.dir;
+      const start = (e) => {
+        e.preventDefault();
+        keys[dir] = true;
+        btn.classList.add('active');
+      };
+      const end = (e) => {
+        e.preventDefault();
+        keys[dir] = false;
+        btn.classList.remove('active');
+      };
+
+      btn.addEventListener('touchstart', start, { passive: false });
+      btn.addEventListener('touchend', end, { passive: false });
+      btn.addEventListener('mousedown', start);
+      btn.addEventListener('mouseup', end);
+      btn.addEventListener('mouseleave', end);
+    });
+
+    // Botones de acción táctiles
+    const btnFlash = document.getElementById('btn-flash');
+    const btnTune = document.getElementById('btn-tune');
+    const btnRun = document.getElementById('btn-run');
+
+    btnFlash.addEventListener('click', (e) => {
+      e.preventDefault();
+      player.flashlightOn = !player.flashlightOn;
+      btnFlash.style.opacity = player.flashlightOn ? '1' : '0.5';
+    });
+
+    const startTune = (e) => {
+      e.preventDefault();
+      isTuning = true;
+      btnTune.classList.add('active');
+    };
+    const endTune = (e) => {
+      e.preventDefault();
+      isTuning = false;
+      btnTune.classList.remove('active');
+    };
+    btnTune.addEventListener('touchstart', startTune, { passive: false });
+    btnTune.addEventListener('touchend', endTune, { passive: false });
+    btnTune.addEventListener('mousedown', startTune);
+    btnTune.addEventListener('mouseup', endTune);
+
+    const startRun = (e) => {
+      e.preventDefault();
+      player.isRunning = true;
+      btnRun.classList.add('active');
+    };
+    const endRun = (e) => {
+      e.preventDefault();
+      player.isRunning = false;
+      btnRun.classList.remove('active');
+    };
+    btnRun.addEventListener('touchstart', startRun, { passive: false });
+    btnRun.addEventListener('touchend', endRun, { passive: false });
+    btnRun.addEventListener('mousedown', startRun);
+    btnRun.addEventListener('mouseup', endRun);
+
+    // Soporte para Teclado (PC)
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
+      if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = true;
+      if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
+      if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') player.isRunning = true;
+      if (e.code === 'KeyF' || e.code === 'Space') isTuning = true;
+      if (e.code === 'KeyL') player.flashlightOn = !player.flashlightOn;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = false;
+      if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = false;
+      if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = false;
+      if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') player.isRunning = false;
+      if (e.code === 'KeyF' || e.code === 'Space') isTuning = false;
+    });
+
+    // ============================================================
+    // INICIAR Y REINICIAR JUEGO
+    // ============================================================
+    document.getElementById('btn-start-game').addEventListener('click', () => {
+      audio.init();
+      document.getElementById('start-screen').style.display = 'none';
+      gameActive = true;
+      lastTime = performance.now();
+      requestAnimationFrame(gameLoop);
+
+      // Latido de corazón dinámico
+      if (!heartbeatInterval) {
+        heartbeatInterval = setInterval(() => {
+          if (!gameActive) return;
+          const dist = Math.hypot(monster.x - player.x, monster.y - player.y);
+          if (dist < 220 || monster.state === 'chase') {
+            audio.playHeartbeat(1.4);
+          }
+        }, 800);
+      }
+    });
+
+    document.getElementById('btn-replay').addEventListener('click', () => {
+      // Reiniciar estado
+      player.x = 1.5 * TILE_SIZE;
+      player.y = 1.5 * TILE_SIZE;
+      player.flashlightOn = true;
+      relays.forEach(r => r.tuned = false);
+      tunedCount = 0;
+      monster.x = 11.5 * TILE_SIZE;
+      monster.y = 7.5 * TILE_SIZE;
+      monster.state = 'patrol';
+      document.getElementById('signal-count').textContent = '0 / 3';
+      document.getElementById('ending-screen').style.display = 'none';
+      gameActive = true;
+      lastTime = performance.now();
+      requestAnimationFrame(gameLoop);
+    });
+
+    // ============================================================
+    // FÍSICAS, COLISIONES Y LÓGICA
+    // ============================================================
+    function isWall(gx, gy) {
+      if (gx < 0 || gy < 0 || gx >= MAP_COLS || gy >= MAP_ROWS) return true;
+      return map[gy][gx] === 1;
+    }
+
+    function checkCollision(x, y, radius) {
+      const left = Math.floor((x - radius) / TILE_SIZE);
+      const right = Math.floor((x + radius) / TILE_SIZE);
+      const top = Math.floor((y - radius) / TILE_SIZE);
+      const bottom = Math.floor((y + radius) / TILE_SIZE);
+
+      for (let r = top; r <= bottom; r++) {
+        for (let c = left; c <= right; c++) {
+          if (isWall(c, r)) return true;
+        }
+      }
+      return false;
+    }
+
+    let lastTime = 0;
+
+    function update(dt) {
+      if (!gameActive) return;
+
+      // Movimiento del jugador
+      let dx = 0;
+      let dy = 0;
+      if (keys.up) dy -= 1;
+      if (keys.down) dy += 1;
+      if (keys.left) dx -= 1;
+      if (keys.right) dx += 1;
+
+      if (dx !== 0 && dy !== 0) {
+        dx *= 0.7071;
+        dy *= 0.7071;
+      }
+
+      const spd = (player.isRunning && player.stamina > 10) ? player.runSpeed : player.speed;
+      if (player.isRunning && (dx !== 0 || dy !== 0)) {
+        player.stamina = Math.max(0, player.stamina - dt * 25);
+      } else {
+        player.stamina = Math.min(100, player.stamina + dt * 15);
+      }
+
+      // Nueva posición tentativa
+      const newX = player.x + dx * spd;
+      const newY = player.y + dy * spd;
+
+      if (!checkCollision(newX, player.y, player.radius)) player.x = newX;
+      if (!checkCollision(player.x, newY, player.radius)) player.y = newY;
+
+      // Calcular ángulo de vista del jugador según movimiento
+      if (dx !== 0 || dy !== 0) {
+        player.angle = Math.atan2(dy, dx);
+      }
+
+      // Verificar proximidad a repetidores
+      activeRelayNear = null;
+      for (const relay of relays) {
+        if (!relay.tuned) {
+          const d = Math.hypot(relay.x - player.x, relay.y - player.y);
+          if (d < 50) {
+            activeRelayNear = relay;
+            break;
+          }
+        }
+      }
+
+      // Lógica de sintonización
+      const tuningBox = document.getElementById('tuning-box');
+      const tuningProgressEl = document.getElementById('tuning-progress');
+      const hudMsg = document.getElementById('hud-msg');
+
+      if (activeRelayNear) {
+        if (isTuning) {
+          tuningBox.style.display = 'flex';
+          tuningProgress += dt * 50; // Tarda ~2 seg
+          tuningProgressEl.style.width = Math.min(100, tuningProgress) + '%';
+          if (Math.random() < 0.2) audio.playStatic(0.1);
+
+          if (tuningProgress >= 100) {
+            activeRelayNear.tuned = true;
+            tunedCount++;
+            document.getElementById('signal-count').textContent = `${tunedCount} / 3`;
+            audio.playTuneTone(true);
+            isTuning = false;
+            tuningProgress = 0;
+            tuningBox.style.display = 'none';
+
+            if (tunedCount >= 3) {
+              triggerEnding(true);
+              return;
+            }
+          }
+        } else {
+          tuningProgress = Math.max(0, tuningProgress - dt * 40);
+          tuningBox.style.display = 'none';
+          hudMsg.textContent = `Presiona SINTONIZAR (${activeRelayNear.freq})`;
+          hudMsg.style.borderColor = '#00f0ff';
+        }
+      } else {
+        tuningBox.style.display = 'none';
+        tuningProgress = 0;
+        hudMsg.textContent = `Encuentra los repetidores (${tunedCount} / 3)`;
+        hudMsg.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+      }
+
+      // IA del Monstruo ("Sujeto 09")
+      updateMonster(dt);
+    }
+
+    function updateMonster(dt) {
+      const distToPlayer = Math.hypot(player.x - monster.x, player.y - monster.y);
+
+      // Si el jugador alumbra directamente al monstruo o corre cerca, entra en persecución
+      if (player.flashlightOn && distToPlayer < 180) {
+        if (monster.state !== 'chase') {
+          audio.playScreech();
+        }
+        monster.state = 'chase';
+        monster.alertTimer = 4.0;
+      }
+
+      if (distToPlayer < 90 && player.isRunning) {
+        monster.state = 'chase';
+        monster.alertTimer = 3.0;
+      }
+
+      if (monster.state === 'chase') {
+        monster.alertTimer -= dt;
+        if (monster.alertTimer <= 0 && distToPlayer > 180) {
+          monster.state = 'patrol';
+        }
+
+        // Mover hacia el jugador
+        const angle = Math.atan2(player.y - monster.y, player.x - monster.x);
+        const mx = monster.x + Math.cos(angle) * monster.chaseSpeed;
+        const my = monster.y + Math.sin(angle) * monster.chaseSpeed;
+        if (!checkCollision(mx, monster.y, monster.radius)) monster.x = mx;
+        if (!checkCollision(monster.x, my, monster.radius)) monster.y = my;
+
+        // Si atrapa al jugador -> Cliffhanger
+        if (distToPlayer < player.radius + monster.radius) {
+          audio.playScreech();
+          triggerEnding(false);
+        }
+      } else {
+        // Modo patrulla suave entre puntos
+        const target = monster.patrolPoints[monster.patrolIndex];
+        const d = Math.hypot(target.x - monster.x, target.y - monster.y);
+        if (d < 15) {
+          monster.patrolIndex = (monster.patrolIndex + 1) % monster.patrolPoints.length;
+        } else {
+          const angle = Math.atan2(target.y - monster.y, target.x - monster.x);
+          const mx = monster.x + Math.cos(angle) * monster.speed;
+          const my = monster.y + Math.sin(angle) * monster.speed;
+          if (!checkCollision(mx, monster.y, monster.radius)) monster.x = mx;
+          if (!checkCollision(monster.x, my, monster.radius)) monster.y = my;
+        }
+      }
+    }
+
+    function triggerEnding(completed) {
+      gameActive = false;
+      const endingScreen = document.getElementById('ending-screen');
+      const headline = document.getElementById('ending-headline');
+
+      if (completed) {
+        headline.textContent = '¡SEÑAL SINCRONIZADA!';
+        headline.style.color = '#00f0ff';
+      } else {
+        headline.textContent = 'HAS SIDO CAPTURADO...';
+        headline.style.color = '#ff2a4b';
+      }
+
+      endingScreen.style.display = 'flex';
+    }
+
+    // ============================================================
+    // RENDERIZADO VISUAL CON LINTERNA Y EFECTOS
+    // ============================================================
+    function render() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Cámara centrada en el jugador
+      const camX = width / 2 - player.x;
+      const camY = height / 2 - player.y;
+
+      ctx.save();
+      ctx.translate(camX, camY);
+
+      // 1. Dibujar suelo del hospital
+      for (let r = 0; r < MAP_ROWS; r++) {
+        for (let c = 0; c < MAP_COLS; c++) {
+          if (map[r][c] === 0) {
+            ctx.fillStyle = '#110e19';
+            ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            ctx.strokeStyle = '#181423';
+            ctx.strokeRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          }
+        }
+      }
+
+      // 2. Dibujar Repetidores de Radio
+      for (const relay of relays) {
+        ctx.fillStyle = relay.tuned ? '#00f0ff' : '#ff2a4b';
+        ctx.beginPath();
+        ctx.arc(relay.x, relay.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ondas de radio parpadeantes
+        ctx.strokeStyle = relay.tuned ? 'rgba(0, 240, 255, 0.4)' : 'rgba(255, 42, 75, 0.4)';
+        ctx.beginPath();
+        ctx.arc(relay.x, relay.y, 18 + Math.sin(performance.now() * 0.005) * 5, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.font = '10px "VT323", monospace';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(relay.freq, relay.x - 20, relay.y - 18);
+      }
+
+      // 3. Dibujar Monstruo ("Sujeto 09")
+      ctx.fillStyle = monster.state === 'chase' ? '#800020' : '#2b1b36';
+      ctx.beginPath();
+      ctx.arc(monster.x, monster.y, monster.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ojos rojos brillantes
+      ctx.fillStyle = '#ff0033';
+      ctx.beginPath();
+      ctx.arc(monster.x - 4, monster.y - 4, 3, 0, Math.PI * 2);
+      ctx.arc(monster.x + 4, monster.y - 4, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4. Dibujar Jugador (Psiquiatra con bata blanca)
+      ctx.fillStyle = '#e5e1f0';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Indicador de dirección
+      ctx.strokeStyle = '#9d4edd';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y);
+      ctx.lineTo(player.x + Math.cos(player.angle) * 18, player.y + Math.sin(player.angle) * 18);
+      ctx.stroke();
+
+      // 5. Dibujar Paredes
+      for (let r = 0; r < MAP_ROWS; r++) {
+        for (let c = 0; c < MAP_COLS; c++) {
+          if (map[r][c] === 1) {
+            ctx.fillStyle = '#1b1626';
+            ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            ctx.strokeStyle = '#282138';
+            ctx.strokeRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          }
+        }
+      }
+
+      ctx.restore();
+
+      // ============================================================
+      // 6. SISTEMA DE ILUMINACIÓN Y OSCURIDAD (LINTERNA)
+      // ============================================================
+      const screenPx = width / 2;
+      const screenPy = height / 2;
+
+      ctx.save();
+      // Crear máscara de oscuridad
+      const darkCanvas = document.createElement('canvas');
+      darkCanvas.width = width;
+      darkCanvas.height = height;
+      const dCtx = darkCanvas.getContext('2d');
+
+      dCtx.fillStyle = 'rgba(4, 3, 6, 0.96)';
+      dCtx.fillRect(0, 0, width, height);
+
+      // Modo de recorte para perforar la luz
+      dCtx.globalCompositeOperation = 'destination-out';
+
+      if (player.flashlightOn) {
+        // Cono de luz de la linterna
+        const flashGrad = dCtx.createRadialGradient(screenPx, screenPy, 15, screenPx, screenPy, 220);
+        flashGrad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+        flashGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.8)');
+        flashGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        dCtx.fillStyle = flashGrad;
+        dCtx.beginPath();
+        dCtx.moveTo(screenPx, screenPy);
+        dCtx.arc(screenPx, screenPy, 220, player.angle - 0.55, player.angle + 0.55);
+        dCtx.closePath();
+        dCtx.fill();
+      }
+
+      // Pequeño halo tenue alrededor del cuerpo
+      const bodyGrad = dCtx.createRadialGradient(screenPx, screenPy, 5, screenPx, screenPy, 45);
+      bodyGrad.addColorStop(0, 'rgba(0, 0, 0, 0.9)');
+      bodyGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      dCtx.fillStyle = bodyGrad;
+      dCtx.beginPath();
+      dCtx.arc(screenPx, screenPy, 45, 0, Math.PI * 2);
+      dCtx.fill();
+
+      // Dibujar la capa de oscuridad sobre el juego
+      ctx.drawImage(darkCanvas, 0, 0);
+      ctx.restore();
+    }
+
+    function gameLoop(time) {
+      if (!gameActive) return;
+      const dt = Math.min(0.05, (time - lastTime) / 1000);
+      lastTime = time;
+
+      update(dt);
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+  </script>
+</body>
+</html>
