@@ -158,22 +158,31 @@ export class InputManager {
     const r = { mv: 0, st: 0, turn: 0, fire: false, any: false, cycleL: false, cycleR: false };
     if (!gp) return r;
 
-    // Aumentamos el deadzone a 0.25 para evitar "drift" (movimiento fantasma) en mandos genéricos
-    const dz = v => Math.abs(v) < 0.25 ? 0 : v;
-    const b = n => gp.buttons[n] && gp.buttons[n].pressed;
+    // Deadzone 0.20: balance entre evitar drift y no cortar señal en mandos baratos
+    const dz = v => Math.abs(v) < 0.20 ? 0 : v;
+    const b = n => !!(gp.buttons[n] && gp.buttons[n].pressed);
 
-    // Joystick izquierdo: movimiento (Adelante/Atrás, Izquierda/Derecha)
+    // Joystick izquierdo: movimiento (Adelante/Atrás = axes[1], Strafe = axes[0])
     r.mv = -dz(gp.axes[1] || 0);
     r.st = dz(gp.axes[0] || 0);
 
-    // Joystick derecho: cámara (Girar)
-    // En mandos estándar, Right Stick X es axes[2].
-    // Solo leemos este eje. Si leemos axes[3] podríamos estar leyendo un gatillo y causar giros constantes.
-    r.turn = dz(gp.axes[2] || 0);
+    // ── Joystick Derecho: Girar Cámara ──────────────────────────────────────
+    // Mandos genéricos baratos (estilo PS3 de terceros) reportan el Right Stick X
+    // en axes[2], axes[3] o incluso axes[4] según el driver del sistema operativo.
+    // Solución: escanear los ejes candidatos y usar el que tenga la mayor señal
+    // absoluta por encima del deadzone. Si el jugador mueve el stick derecho,
+    // ese eje tendrá el valor más alto; los demás quedarán en 0 o drift mínimo.
+    let bestTurn = 0;
+    for (let axIdx = 2; axIdx <= 4; axIdx++) {
+      const val = gp.axes[axIdx] !== undefined ? gp.axes[axIdx] : 0;
+      if (Math.abs(val) > Math.abs(bestTurn)) bestTurn = val;
+    }
+    r.turn = dz(bestTurn);
 
-    r.fire = !!(b(7) || b(0)); // Solo RT o Botón A
-    r.cycleL = !!b(4); // LB
-    r.cycleR = !!b(5); // RB
+    // Botones de disparo: RT(7), RB(5), A(0), B(1), X(2) — cubre layouts genéricos
+    r.fire = !!(b(7) || b(5) || b(0) || b(1) || b(2));
+    r.cycleL = !!(b(4) || b(6)); // LB o LT
+    r.cycleR = false; // cycleR manejado por LB/LT alternativo
 
     for (let i = 0; i < gp.buttons.length; i++) {
       if (gp.buttons[i] && gp.buttons[i].pressed) {

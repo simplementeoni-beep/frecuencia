@@ -176,7 +176,19 @@ export class Game {
 
     window.addEventListener('gamepadconnected', e => {
       const padEl = this.$('pad');
-      if (padEl) padEl.textContent = 'Mando detectado: ' + e.gamepad.id;
+      if (padEl) padEl.textContent = 'Mando: ' + e.gamepad.id.substring(0, 32);
+      // Diagnóstico de ejes al conectar el mando
+      const gp = e.gamepad;
+      const axisInfo = gp.axes.map((v, i) => `A${i}:${v.toFixed(2)}`).join(' ');
+      const btnCount = gp.buttons.length;
+      this.toast.show(`🎮 MANDO CONECTADO · ${btnCount} botones · ${gp.axes.length} ejes`);
+      console.log('[FRECUENCIA] Mando conectado:', gp.id);
+      console.log('[FRECUENCIA] Ejes:', axisInfo);
+      console.log('[FRECUENCIA] Tip: usa __frec.pad() para ver ejes en tiempo real');
+    });
+
+    window.addEventListener('gamepaddisconnected', () => {
+      this.toast.show('⚠️ MANDO DESCONECTADO');
     });
   }
 
@@ -1023,7 +1035,21 @@ export class Game {
       tp: (x, y, a) => { this.player.x = x; this.player.y = y; this.player.a = a; },
       bossHp: v => { if (this.boss) this.boss.hp = v; },
       weapon: () => this.player.weapon,
-      enemies: () => this.enemies.filter(e => e.alive).length
+      enemies: () => this.enemies.filter(e => e.alive).length,
+      // Diagnóstico del mando en tiempo real — útil para depurar el joystick derecho
+      // Uso: abre la consola del navegador y escribe: __frec.pad()
+      pad: () => {
+        const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const gp = Array.from(pads).find(p => p && p.connected);
+        if (!gp) { console.log('No hay mando conectado'); return; }
+        const axes = gp.axes.map((v, i) => `axes[${i}] = ${v.toFixed(3)}`).join('\n');
+        const btns = gp.buttons.map((b, i) => b.pressed ? `btn[${i}] PRESSED` : null).filter(Boolean).join(', ');
+        console.log('=== MANDO:', gp.id, '===');
+        console.log(axes);
+        console.log('Botones activos:', btns || 'ninguno');
+        console.log('Turn calculado:', this.input.getPad().turn.toFixed(3));
+        return { axes: Array.from(gp.axes), buttons: gp.buttons.length };
+      }
     };
   }
 
