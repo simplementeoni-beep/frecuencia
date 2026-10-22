@@ -173,28 +173,26 @@ export class InputManager {
     r.mv = -dz(gp.axes[1] || 0);
     r.st = dz(gp.axes[0] || 0);
 
-    // D-Pad como opción de movimiento adicional
+    // D-Pad vertical para movimiento adelante/atrás
     if (b(12)) r.mv += 1; // D-pad Arriba
     if (b(13)) r.mv -= 1; // D-pad Abajo
-    if (b(14)) r.st -= 1; // D-pad Izquierda
-    if (b(15)) r.st += 1; // D-pad Derecha
 
-    // ── Joystick Derecho: Girar Cámara (Eje Horizontal) ──────────────────────
-    // En HTML5 Gamepad API y en Linux evdev (ABS_Z), axes[2] es SIEMPRE el eje horizontal
-    // del stick derecho.
-    // NOTA CRÍTICA: NO escanear axes[4] ni axes[5], porque en Linux son los gatillos analógicos
-    // (ABS_GAS / ABS_BRAKE) que reposan en -1.0 en estado de reposo, lo cual bloqueaba
-    // por completo la detección del joystick derecho.
+    // ── Giro de Cámara con Botones (Reemplazo del Joystick Derecho) ─────────
+    // El joystick derecho físico no emite señal en este mando, por lo que la rotación
+    // de cámara se controla con los botones de acción del mando:
+    // - Girar a la IZQUIERDA: Botón Rosado (Cuadrado / X: b(2) o b(3)) o D-Pad Izq (b(14))
+    // - Girar a la DERECHA:   Botón Naranja (Círculo / B: b(1)) o D-Pad Der (b(15))
     let turn = 0;
-    if (gp.axes && gp.axes[2] !== undefined) {
-      turn = dz(gp.axes[2]);
-    }
+    if (b(2) || b(3) || b(14)) turn -= 1; // Giro Izquierda (Rosado)
+    if (b(1) || b(15)) turn += 1;         // Giro Derecha (Naranja)
     r.turn = turn;
 
-    // Botones de disparo: RT(7), RB(5), A(0), B(1), X(2) — cubre layouts genéricos
-    r.fire = !!(b(7) || b(5) || b(0) || b(1) || b(2));
-    r.cycleL = !!(b(4) || b(6)); // LB o LT
-    r.cycleR = false;
+    // ── Disparo: Gatillos R2 (b(7)), R1 (b(5)) y botón A inferior (b(0)) ───
+    r.fire = !!(b(7) || b(5) || b(0));
+
+    // ── Cambio de Armas: L1 (b(4)) siguiente arma, L2 (b(6)) arma anterior ─
+    r.cycleR = !!b(4); // L1 -> siguiente arma
+    r.cycleL = !!b(6); // L2 -> arma anterior
 
     for (let i = 0; i < gp.buttons.length; i++) {
       if (gp.buttons[i] && gp.buttons[i].pressed) {
