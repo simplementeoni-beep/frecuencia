@@ -149,40 +149,52 @@ export class InputManager {
       pads = [];
     }
     let gp = null;
+    // Priorizar un gamepad conectado que tenga ejes y botones reales
     for (let i = 0; i < pads.length; i++) {
-      if (pads[i] && pads[i].connected) {
-        gp = pads[i];
+      const p = pads[i];
+      if (p && p.connected && (p.axes?.length >= 2 || p.buttons?.length > 4)) {
+        gp = p;
         break;
+      }
+    }
+    if (!gp) {
+      for (let i = 0; i < pads.length; i++) {
+        if (pads[i] && pads[i].connected) { gp = pads[i]; break; }
       }
     }
     const r = { mv: 0, st: 0, turn: 0, fire: false, any: false, cycleL: false, cycleR: false };
     if (!gp) return r;
 
-    // Deadzone 0.20: balance entre evitar drift y no cortar señal en mandos baratos
-    const dz = v => Math.abs(v) < 0.20 ? 0 : v;
+    // Deadzone 0.12: respuesta suave y precisa sin drift en reposo
+    const dz = v => Math.abs(v) < 0.12 ? 0 : v;
     const b = n => !!(gp.buttons[n] && gp.buttons[n].pressed);
 
     // Joystick izquierdo: movimiento (Adelante/Atrás = axes[1], Strafe = axes[0])
     r.mv = -dz(gp.axes[1] || 0);
     r.st = dz(gp.axes[0] || 0);
 
-    // ── Joystick Derecho: Girar Cámara ──────────────────────────────────────
-    // Mandos genéricos baratos (estilo PS3 de terceros) reportan el Right Stick X
-    // en axes[2], axes[3] o incluso axes[4] según el driver del sistema operativo.
-    // Solución: escanear los ejes candidatos y usar el que tenga la mayor señal
-    // absoluta por encima del deadzone. Si el jugador mueve el stick derecho,
-    // ese eje tendrá el valor más alto; los demás quedarán en 0 o drift mínimo.
-    let bestTurn = 0;
-    for (let axIdx = 2; axIdx <= 4; axIdx++) {
-      const val = gp.axes[axIdx] !== undefined ? gp.axes[axIdx] : 0;
-      if (Math.abs(val) > Math.abs(bestTurn)) bestTurn = val;
+    // D-Pad como opción de movimiento adicional
+    if (b(12)) r.mv += 1; // D-pad Arriba
+    if (b(13)) r.mv -= 1; // D-pad Abajo
+    if (b(14)) r.st -= 1; // D-pad Izquierda
+    if (b(15)) r.st += 1; // D-pad Derecha
+
+    // ── Joystick Derecho: Girar Cámara (Eje Horizontal) ──────────────────────
+    // En HTML5 Gamepad API y en Linux evdev (ABS_Z), axes[2] es SIEMPRE el eje horizontal
+    // del stick derecho.
+    // NOTA CRÍTICA: NO escanear axes[4] ni axes[5], porque en Linux son los gatillos analógicos
+    // (ABS_GAS / ABS_BRAKE) que reposan en -1.0 en estado de reposo, lo cual bloqueaba
+    // por completo la detección del joystick derecho.
+    let turn = 0;
+    if (gp.axes && gp.axes[2] !== undefined) {
+      turn = dz(gp.axes[2]);
     }
-    r.turn = dz(bestTurn);
+    r.turn = turn;
 
     // Botones de disparo: RT(7), RB(5), A(0), B(1), X(2) — cubre layouts genéricos
     r.fire = !!(b(7) || b(5) || b(0) || b(1) || b(2));
     r.cycleL = !!(b(4) || b(6)); // LB o LT
-    r.cycleR = false; // cycleR manejado por LB/LT alternativo
+    r.cycleR = false;
 
     for (let i = 0; i < gp.buttons.length; i++) {
       if (gp.buttons[i] && gp.buttons[i].pressed) {
