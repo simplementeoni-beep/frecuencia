@@ -226,10 +226,24 @@ export class Game {
     this.player.bob = 0;
 
     if (fresh) {
-      this.player.reset(n);
-    } else if (L.weapon) {
-      this.player.addWeapon(L.weapon);
-      this.player.weapon = L.weapon;
+      this.player.reset(n, this.difficulty);
+    } else {
+      // Reabastecimiento entre niveles según dificultad
+      if (this.difficulty === 0) {
+        this.player.addAmmo('pistol', 20);
+        this.player.addAmmo('shotgun', 6);
+        this.player.addAmmo('smg', 45);
+        this.player.addAmmo('defib', 4);
+      } else if (this.difficulty === 1) {
+        this.player.addAmmo('pistol', 10);
+        this.player.addAmmo('shotgun', 3);
+        this.player.addAmmo('smg', 20);
+        this.player.addAmmo('defib', 2);
+      }
+      if (L.weapon) {
+        this.player.addWeapon(L.weapon);
+        this.player.weapon = L.weapon;
+      }
     }
 
     this.enemies = [];
@@ -283,6 +297,7 @@ export class Game {
     } else {
       if (n === 1) {
         this.props.push({ x: 8.5, y: 4.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
+        if (this.difficulty === 0) this.props.push({ x: 18.5, y: 4.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
         this.props.push({ x: 14.5, y: 4.5, spr: 'pickup_medkit', taken: false, type: 'medkit' });
         this.props.push({ x: 21.5, y: 4.5, spr: 'pickup_fe', taken: false, type: 'fe' });
         this.props.push(
@@ -292,6 +307,7 @@ export class Game {
         this.toast.show('LA MORGUE · NIVEL 1');
       } else if (n === 2) {
         this.props.push({ x: 10.5, y: 5.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
+        if (this.difficulty === 0) this.props.push({ x: 15.5, y: 7.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
         this.props.push({ x: 18.5, y: 5.5, spr: 'pickup_medkit', taken: false, type: 'medkit' });
         this.props.push(
           { x: 6.5, y: 4.5, spr: 'bones' }, { x: 14.5, y: 2.5, spr: 'bones' }, { x: 22.5, y: 8.5, spr: 'bones' },
@@ -304,6 +320,7 @@ export class Game {
         this.levelTimer = times[this.difficulty] !== undefined ? times[this.difficulty] : 90;
         this.warnedOverload = false;
         this.props.push({ x: 11.5, y: 7.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
+        if (this.difficulty === 0) this.props.push({ x: 10.5, y: 4.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
         this.props.push({ x: 15.5, y: 7.5, spr: 'pickup_medkit', taken: false, type: 'medkit' });
         this.props.push(
           { x: 9.5, y: 5.5, spr: 'surgical_tray' }, { x: 13.5, y: 9.5, spr: 'surgical_tray' },
@@ -872,8 +889,16 @@ export class Game {
       if (Math.hypot(p.x - this.player.x, p.y - this.player.y) < Config.pickupRadius) {
         if (p.type === 'ammo' || p.spr === 'pickup_ammo') {
           p.taken = true; this.audio.sfxPick();
-          this.player.addAmmo('pistol', 12); this.player.addAmmo('shotgun', 4);
-          this.player.addAmmo('smg', 30); this.player.addAmmo('defib', 3);
+          let pAmmo = 16, sAmmo = 5, smgAmmo = 40, dAmmo = 4;
+          if (this.difficulty === 0) {
+            pAmmo = 24; sAmmo = 8; smgAmmo = 60; dAmmo = 6;
+          } else if (this.difficulty === 2) {
+            pAmmo = 10; sAmmo = 3; smgAmmo = 25; dAmmo = 2;
+          }
+          this.player.addAmmo('pistol', pAmmo);
+          this.player.addAmmo('shotgun', sAmmo);
+          this.player.addAmmo('smg', smgAmmo);
+          this.player.addAmmo('defib', dAmmo);
         } else if (p.type === 'medkit' || p.spr === 'pickup_medkit') {
           p.taken = true; this.audio.sfxPick();
           this.hp = Math.min(100, this.hp + 35);
