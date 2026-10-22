@@ -182,7 +182,7 @@ export function drawCross(ctx, beatInfo, fx, beatDuration, windowSize) {
   }
 }
 
-export function drawHUD(ctx, player, hp, combo, enemies, curLevel, levelName, boss, toast) {
+export function drawHUD(ctx, player, hp, combo, enemies, curLevel, levelName, boss, toast, levelTimer = null) {
   ctx.fillStyle = 'rgba(7,6,10,.92)';
   ctx.fillRect(0, H - 32, W, 32);
   ctx.fillStyle = 'rgba(139,92,255,.35)';
@@ -259,6 +259,18 @@ export function drawHUD(ctx, player, hp, combo, enemies, curLevel, levelName, bo
   ctx.font = '12px VT323, monospace';
   ctx.fillStyle = '#8a84a0';
   ctx.fillText(boss ? 'JEFE FINAL' : levelName.toUpperCase() + ' · ' + left + ' ENEMIGOS', W - 10, 14);
+
+  // Temporizador de sobrecarga en el Quirófano
+  if (levelTimer !== null && levelTimer !== undefined) {
+    const mins = Math.floor(levelTimer / 60);
+    const secs = Math.floor(levelTimer % 60);
+    const timeStr = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    ctx.textAlign = 'center';
+    ctx.font = '14px VT323, monospace';
+    const isUrgent = levelTimer <= 15;
+    ctx.fillStyle = isUrgent ? (Math.floor(Date.now() / 200) % 2 === 0 ? '#ff2a4b' : '#ffff00') : '#00f0ff';
+    ctx.fillText(`⚡ SOBRECARGA: ${timeStr}`, W / 2, 14);
+  }
 
   if (boss && boss.alive) {
     ctx.textAlign = 'center';

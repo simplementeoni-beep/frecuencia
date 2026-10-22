@@ -689,6 +689,86 @@ export function generateSprites() {
     g.beginPath(); g.moveTo(64, 120); g.bezierCurveTo(80, 90, 30, 50, 110, 20); g.stroke();
   });
 
+  SPR.vein_arrow_east = makeSprite(128, 128, g => {
+    const grad = g.createRadialGradient(64, 64, 10, 64, 64, 60);
+    grad.addColorStop(0, 'rgba(255, 30, 60, 0.45)');
+    grad.addColorStop(1, 'rgba(100, 0, 20, 0)');
+    g.fillStyle = grad;
+    g.beginPath(); g.arc(64, 64, 60, 0, Math.PI * 2); g.fill();
+
+    g.strokeStyle = 'rgba(220, 20, 60, 0.95)';
+    g.lineWidth = 14;
+    g.lineCap = 'round';
+    g.beginPath();
+    g.moveTo(25, 64);
+    g.lineTo(85, 64);
+    g.stroke();
+
+    g.lineWidth = 5;
+    g.strokeStyle = 'rgba(255, 90, 110, 0.75)';
+    g.beginPath();
+    g.moveTo(45, 64); g.lineTo(35, 42);
+    g.moveTo(60, 64); g.lineTo(50, 86);
+    g.stroke();
+
+    g.fillStyle = '#ff2a4b';
+    g.beginPath();
+    g.moveTo(112, 64);
+    g.lineTo(72, 28);
+    g.lineTo(76, 52);
+    g.lineTo(68, 52);
+    g.lineTo(68, 76);
+    g.lineTo(76, 76);
+    g.lineTo(72, 100);
+    g.closePath();
+    g.fill();
+
+    g.fillStyle = '#ffb3c1';
+    g.beginPath();
+    g.arc(98, 64, 4, 0, Math.PI * 2);
+    g.fill();
+  });
+
+  SPR.vein_arrow_south = makeSprite(128, 128, g => {
+    const grad = g.createRadialGradient(64, 64, 10, 64, 64, 60);
+    grad.addColorStop(0, 'rgba(255, 30, 60, 0.45)');
+    grad.addColorStop(1, 'rgba(100, 0, 20, 0)');
+    g.fillStyle = grad;
+    g.beginPath(); g.arc(64, 64, 60, 0, Math.PI * 2); g.fill();
+
+    g.strokeStyle = 'rgba(220, 20, 60, 0.95)';
+    g.lineWidth = 14;
+    g.lineCap = 'round';
+    g.beginPath();
+    g.moveTo(64, 25);
+    g.lineTo(64, 85);
+    g.stroke();
+
+    g.lineWidth = 5;
+    g.strokeStyle = 'rgba(255, 90, 110, 0.75)';
+    g.beginPath();
+    g.moveTo(64, 45); g.lineTo(42, 35);
+    g.moveTo(64, 60); g.lineTo(86, 50);
+    g.stroke();
+
+    g.fillStyle = '#ff2a4b';
+    g.beginPath();
+    g.moveTo(64, 112);
+    g.lineTo(28, 72);
+    g.lineTo(52, 76);
+    g.lineTo(52, 68);
+    g.lineTo(76, 68);
+    g.lineTo(76, 76);
+    g.lineTo(100, 72);
+    g.closePath();
+    g.fill();
+
+    g.fillStyle = '#ffb3c1';
+    g.beginPath();
+    g.arc(64, 98, 4, 0, Math.PI * 2);
+    g.fill();
+  });
+
   SPR.surgical_tray = makeSprite(64, 32, g => {
     g.fillStyle = '#a1a1aa'; g.fillRect(10, 10, 44, 12);
     g.fillStyle = '#5c121e'; g.fillRect(15, 12, 20, 8);
@@ -720,6 +800,8 @@ export function generateSprites() {
     blood_puddle: { hWorld: 0.9, isFloor: true },
     bones: { hWorld: 0.5, isFloor: true },
     flesh_veins: { hWorld: 1.2, isFloor: true },
+    vein_arrow_east: { hWorld: 1.1, isFloor: true },
+    vein_arrow_south: { hWorld: 1.1, isFloor: true },
     surgical_tray: { hWorld: 0.4, isFloor: true }
   };
 

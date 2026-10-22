@@ -30,7 +30,38 @@ export class InputManager {
     this.pointerLocked = false;  // Estado del pointer lock
     this.mouseSensitivity = 0.003; // Sensibilidad del ratón para girar la cámara
 
+    // ── Controles táctiles móviles ──
+    this.touchMv = 0;
+    this.touchSt = 0;
+    this.touchTurn = 0;
+    this.touchFire = false;
+
     this.setupListeners();
+  }
+
+  setTouchMove(mv = 0, st = 0, turn = 0) {
+    this.touchMv = mv;
+    this.touchSt = st;
+    this.touchTurn = turn;
+  }
+
+  triggerTouchFire() {
+    this.firePressed = true;
+  }
+
+  triggerTouchAdvance() {
+    this.advancePressed = true;
+  }
+
+  setTouchWeaponKey(key) {
+    this.selectedWeaponKey = key;
+  }
+
+  resetTouch() {
+    this.touchMv = 0;
+    this.touchSt = 0;
+    this.touchTurn = 0;
+    this.touchFire = false;
   }
 
   setupListeners() {
@@ -172,9 +203,9 @@ export class InputManager {
       this.mouseDeltaX = 0;
     }
 
-    mv += pad.mv;
-    st += pad.st;
-    turn += pad.turn;
+    mv += pad.mv + (this.touchMv || 0);
+    st += pad.st + (this.touchSt || 0);
+    turn += pad.turn + (this.touchTurn || 0);
 
     mv = Math.max(-1, Math.min(1, mv));
     st = Math.max(-1, Math.min(1, st));

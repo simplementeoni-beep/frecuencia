@@ -66,11 +66,11 @@ export const LEVELS = [
     start: [4.5, 12.5, 0],
     waves: [
       // Oleada 1: Cirujanos disparando desde lejos, protegidos por zombis
-      [['zombie', 12.5, 8.5], ['zombie', 12.5, 9.5], ['zombie', 12.5, 10.5], ['surgeon', 17.5, 10.5], ['surgeon', 17.5, 7.5], ['cyst', 13.5, 10.5]],
+      [['zombie', 12.5, 8.5], ['zombie', 12.5, 9.5], ['zombie', 11.5, 10.5], ['surgeon', 17.5, 10.5], ['surgeon', 17.5, 7.5], ['cyst', 13.5, 10.5]],
       // Oleada 2: Perros atacando rápido mientras te disparan
       [['dog', 12.5, 5.5], ['dog', 12.5, 13.5], ['zombie', 10.5, 8.5], ['zombie', 10.5, 10.5], ['surgeon', 15.5, 7.5], ['surgeon', 15.5, 11.5], ['orderly', 14.5, 7.5]],
       // Oleada 3: Fuego cruzado extremo
-      [['surgeon', 10.5, 7.5], ['surgeon', 10.5, 10.5], ['surgeon', 17.5, 8.5], ['surgeon', 17.5, 9.5], ['zombie', 14.5, 8.5], ['zombie', 14.5, 10.5], ['dog', 13.5, 6.5], ['dog', 13.5, 12.5], ['cyst', 14.5, 10.5], ['orderly', 15.5, 9.5]]
+      [['surgeon', 10.5, 7.5], ['surgeon', 10.5, 10.5], ['surgeon', 17.5, 8.5], ['surgeon', 17.5, 9.5], ['zombie', 14.5, 8.5], ['zombie', 14.5, 10.5], ['dog', 13.5, 7.5], ['dog', 13.5, 12.5], ['cyst', 14.5, 10.5], ['orderly', 15.5, 9.5]]
     ],
     memory: {
       head: 'Recuerdo 3 de 4',

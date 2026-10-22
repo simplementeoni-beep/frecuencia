@@ -154,20 +154,29 @@ export function buildL3() {
     if (holeDir === 'W') { g[ry + Math.floor(rh/2)][rx] = 0; g[ry + Math.floor(rh/2)-1][rx] = 0; }
   };
 
-  drawRing(2, 2, 21, 17, 'S'); // Anillo exterior
-  drawRing(5, 4, 15, 13, 'E'); // Anillo medio
-  drawRing(8, 6, 9, 9, 'N'); // Sala central de operaciones
+  // Anillo exterior: hueco al Sur para entrar desde el corredor inicial
+  drawRing(2, 2, 21, 17, 'S');
+  // Anillo medio: hueco al Oeste para conectar con la entrada del jugador
+  drawRing(5, 4, 15, 13, 'W');
+  // Sala central (quirofano): hueco al Sur hacia el corredor del anillo medio
+  drawRing(8, 6, 9, 9, 'S');
 
-  // Props: Armarios de instrumental quirúrgico (11) en los anillos oscuros
-  g[3][3] = 11; g[17][21] = 11; g[17][3] = 11; 
-  // Pila de restos en el centro
+  // Corredor de acceso desde inicio del jugador (4.5, 12.5) al anillo medio
+  // Ampliar hueco oeste del anillo medio para cubrir y=9 a y=12
+  g[9][5] = 0; g[10][5] = 0; g[11][5] = 0; g[12][5] = 0;
+
+  // Props: Armarios de instrumental quirurgico (11) en coords validas
+  g[3][3] = 11; g[17][3] = 11; g[3][20] = 11;
+  // Pila de restos en el corredor medio
   g[9][10] = 10; g[9][14] = 10;
 
-  // Lámparas
-  lamps.push([12, 10], [12, 8], [12, 12]); // Muy iluminado en el centro
+  // Lamparas
+  lamps.push([12, 10], [12, 8], [12, 12]); // Centro muy iluminado
   lamps.push([3, 10], [21, 10], [12, 3], [12, 17]); // Pasillos oscuros
+  lamps.push([6, 10], [18, 10]); // Pasillos del anillo medio
 
-  g[10][12] = 4; // Salida en el centro (es un ascensor)
+  // Salida tipo 5 (ascensor) en el centro de la sala quirurgica
+  g[10][12] = 5;
   return { g, lamps };
 }
 
@@ -208,23 +217,94 @@ export function buildL4() {
 
   border(g, w, h, 8);
 
-  // Asegurar una cueva central gigante para la batalla contra el jefe
-  for (let y = 8; y < 17; y++) {
-    for (let x = 10; x < 21; x++) {
+  // Asegurar una cueva central gigante y espaciosa para la batalla contra el jefe
+  for (let y = 7; y <= 17; y++) {
+    for (let x = 10; x <= 20; x++) {
       const dist = Math.sqrt((x - 15)**2 + (y - 12)**2);
-      if (dist < 4.5) g[y][x] = 0;
+      if (dist < 5.2) g[y][x] = 0;
     }
   }
 
-  // Forzar un camino limpio desde el inicio (2,2)
-  for(let x = 2; x < 12; x++) g[3][x] = 0;
-  for(let y = 3; y < 12; y++) g[y][12] = 0;
+  // Arteria principal amplia (3 casillas de ancho) desde el inicio (3,3) hasta la cámara central (15,12)
+  // Tramo 1: Hacia el Este
+  for (let x = 2; x <= 16; x++) {
+    g[2][x] = 0; g[3][x] = 0; g[4][x] = 0;
+  }
+  // Tramo 2: Hacia el Sur (conectando con la cámara del corazón)
+  for (let y = 3; y <= 13; y++) {
+    g[y][14] = 0; g[y][15] = 0; g[y][16] = 0;
+  }
   
-  // Props: Quistes gigantes en las paredes (10)
-  g[5][10] = 10; g[13][16] = 10; g[15][9] = 10;
+  // Props: Quistes gigantes en las paredes laterales
+  g[5][10] = 10; g[13][18] = 10; g[15][9] = 10;
 
-  // Lámparas "biológicas" pulsantes esparcidas por las cavernas
-  lamps.push([15, 12], [11, 10], [19, 14], [15, 7], [15, 17], [6, 3]);
+  // Lámparas biológicas pulsantes que guían por el camino arterial hasta el corazón
+  lamps.push(
+    [4, 3],    // Cerca de la entrada
+    [9, 3],    // Tramo este
+    [15, 3],   // Esquina del giro hacia el sur
+    [15, 8],   // Entrada a la cámara central
+    [15, 12],  // Sobre el Corazón
+    [12, 12],  // Flanco oeste de la cámara
+    [18, 12]   // Flanco este de la cámara
+  );
 
   return { g, lamps };
 }
+
+// ==========================================
+// DEMO: EL CORREDOR DEL DESPERTAR (Pasillo largo)
+// ==========================================
+export function buildDemoCorridor() {
+  const w = 48, h = 9;
+  const g = mk(w, h, 1);
+  const lamps = [];
+
+  // Habitación inicial (Celda del paciente: de x = 1 a 4, y = 2 a 6)
+  for (let y = 2; y <= 6; y++) {
+    for (let x = 1; x <= 4; x++) g[y][x] = 0;
+  }
+  // Cartel en la pared de inicio
+  g[2][1] = 13;
+
+  // Pasillo largo (De x = 4 a x = 43, de ancho 3: y = 3, 4, 5)
+  for (let x = 4; x <= 43; x++) {
+    g[3][x] = 0; g[4][x] = 0; g[5][x] = 0;
+  }
+
+  // Pequeñas bahías o alcobas laterales con props
+  // Bahía médica en x = 15 (donde se recoge la pistola)
+  g[2][14] = 0; g[2][15] = 0; g[2][16] = 0;
+  g[2][15] = 11; // Camilla médica
+
+  // Bahía en x = 24 (donde acecha el enfermero)
+  g[6][23] = 0; g[6][24] = 0; g[6][25] = 0;
+  g[6][24] = 10; // Bolsas de cadáveres / basura
+
+  // Bahía en x = 33 (zona de tensión con el perro)
+  g[2][32] = 0; g[2][33] = 0; g[2][34] = 0;
+  g[2][33] = 10;
+
+  // Sala final / Montacargas (De x = 44 a 46, y = 2 a 6)
+  for (let y = 2; y <= 6; y++) {
+    for (let x = 44; x <= 46; x++) g[y][x] = 0;
+  }
+
+  // Compuerta blindada de salida (Bloquea el paso en x = 43 hasta limpiar el pasillo)
+  g[3][43] = 4; g[4][43] = 4; g[5][43] = 4;
+
+  // Lámparas a lo largo del pasillo
+  lamps.push(
+    [2, 4],   // Habitación inicial
+    [9, 4],   // Primer tramo
+    [15, 4],  // Camilla con pistola
+    [22, 4],  // Segundo tramo
+    [29, 4],  // Zona de tensión
+    [36, 4],  // Antes del final
+    [42, 4],  // Frente a la compuerta
+    [45, 4]   // Sala final
+  );
+
+  return { g, lamps };
+}
+

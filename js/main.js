@@ -55,6 +55,8 @@ export class Game {
     this.playerName = 'JUGADOR';
     this.lbTimeout = null;
     this.difficulty = 1; // 0: Fácil, 1: Normal, 2: Difícil
+    this.levelTimer = null; // Temporizador para el Quirófano
+    this.warnedOverload = false;
 
     // Entidades del mundo
     this.map = [];
@@ -227,6 +229,8 @@ export class Game {
     this.beatN = 0;
     this.tut = null;
     this.combo = 1;
+    this.levelTimer = null;
+    this.warnedOverload = false;
     this.audio.updateLayers(this.combo);
 
     this.hp = fresh ? 100 : Math.min(100, this.hp + 40);
@@ -239,18 +243,31 @@ export class Game {
       this.tut = { step: 0, dist: 0, turn: 0, lx: this.player.x, ly: this.player.y, la: this.player.a, doorOpen: false };
       this.toast.show('DESPERTAR: CAMINA CON W/A/S/D');
     } else if (L.boss) {
-      this.boss = mkEnemy('boss', 9.5, 7.5);
+      // El Corazón en el centro de la gran cámara (15.5, 12.0)
+      this.boss = mkEnemy('boss', 15.5, 12.0);
       this.enemies.push(this.boss);
-      this.props.push({ x: 5.5, y: 7.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
-      this.props.push({ x: 13.5, y: 7.5, spr: 'pickup_medkit', taken: false, type: 'medkit' });
+
+      // Flechas y arterias biológicas luminosas que guían al jugador desde el inicio (3.5, 3.5)
       this.props.push(
-        { x: 3.5, y: 3.5, spr: 'flesh_veins' },
-        { x: 15.5, y: 3.5, spr: 'flesh_veins' },
-        { x: 3.5, y: 11.5, spr: 'flesh_veins' },
-        { x: 15.5, y: 11.5, spr: 'flesh_veins' },
-        { x: 9.5, y: 7.5, spr: 'blood_puddle' }
+        // Tramo Este
+        { x: 6.0, y: 3.0, spr: 'vein_arrow_east' },
+        { x: 9.0, y: 3.0, spr: 'vein_arrow_east' },
+        { x: 12.0, y: 3.0, spr: 'vein_arrow_east' },
+        // Giro hacia el Sur
+        { x: 15.0, y: 3.0, spr: 'vein_arrow_south' },
+        // Tramo Sur hacia la cámara
+        { x: 15.0, y: 5.5, spr: 'vein_arrow_south' },
+        { x: 15.0, y: 8.0, spr: 'vein_arrow_south' },
+        { x: 15.0, y: 10.5, spr: 'vein_arrow_south' },
+        // Suministros y decoraciones en la cámara del jefe
+        { x: 12.5, y: 12.0, spr: 'pickup_ammo', taken: false, type: 'ammo' },
+        { x: 18.5, y: 12.0, spr: 'pickup_medkit', taken: false, type: 'medkit' },
+        { x: 15.5, y: 8.5, spr: 'pickup_ammo', taken: false, type: 'ammo' },
+        { x: 13.5, y: 10.5, spr: 'flesh_veins' },
+        { x: 17.5, y: 10.5, spr: 'flesh_veins' },
+        { x: 15.5, y: 14.5, spr: 'blood_puddle' }
       );
-      this.toast.show('EL CORAZÓN · JEFE FINAL');
+      this.toast.show('EL CORAZÓN · SIGUE EL FLUJO DE LAS ARTERIAS');
     } else {
       if (n === 1) {
         this.props.push({ x: 8.5, y: 4.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
@@ -270,13 +287,17 @@ export class Game {
         );
         this.toast.show('LA PERRERA · NIVEL 2');
       } else if (n === 3) {
+        // Temporizador de sobrecarga según dificultad: Fácil 120s, Normal 90s, Difícil 60s
+        const times = [120, 90, 60];
+        this.levelTimer = times[this.difficulty] !== undefined ? times[this.difficulty] : 90;
+        this.warnedOverload = false;
         this.props.push({ x: 11.5, y: 7.5, spr: 'pickup_ammo', taken: false, type: 'ammo' });
         this.props.push({ x: 15.5, y: 7.5, spr: 'pickup_medkit', taken: false, type: 'medkit' });
         this.props.push(
           { x: 9.5, y: 5.5, spr: 'surgical_tray' }, { x: 13.5, y: 9.5, spr: 'surgical_tray' },
           { x: 10.5, y: 6.5, spr: 'blood_puddle' }, { x: 12.5, y: 8.5, spr: 'blood_puddle' }, { x: 11.5, y: 4.5, spr: 'blood_puddle' }
         );
-        this.toast.show('EL QUIRÓFANO · NIVEL 3');
+        this.toast.show('EL QUIRÓFANO · EVITA LA SOBRECARGA DEL GENERADOR');
       }
       spawnList(L.waves[0], 2.6, this.map, this.enemies);
     }
@@ -605,20 +626,9 @@ export class Game {
       });
     });
 
-    // Trampa dinámica: electroshocks en Nivel 3 (cada 4 beats se activa)
-    if (this.state === 'play' && this.curLevel === 3 && this.beatN % 4 === 0) {
-      this._triggerElectroshockTrap();
-    }
-  }
-
-  _triggerElectroshockTrap() {
-    this.fx.envElectric = 0.8;
-    this.fx.shake = Math.max(this.fx.shake, 0.15);
-    // Dañar al jugador si está en el anillo exterior (x < 5 o x > 20 o y < 5 o y > 16)
-    // Basado en el diseño del mapa del nivel 3 (anillos concéntricos)
-    if (this.player.x < 5 || this.player.x > 20 || this.player.y < 5 || this.player.y > 16) {
-      this.hurt(12);
-      this.toast.show('¡DESCARGA ELÉCTRICA!');
+    // Destello de tensión al compás en Quirófano
+    if (this.curLevel === 3 && this.beatN % 8 === 0) {
+      this.fx.envElectric = 0.35;
     }
   }
 
@@ -708,6 +718,41 @@ export class Game {
     this.updateEntities(dt, bi);
 
     if (this.curLevel === 0 && this.tut) this.tutorialUpdate(dt);
+
+    // Gestión del temporizador de sobrecarga en el Nivel 3 (Quirófano)
+    if (this.state === 'play' && this.curLevel === 3 && this.levelTimer !== null) {
+      this.levelTimer -= dt;
+
+      if (this.levelTimer <= 15 && !this.warnedOverload) {
+        this.warnedOverload = true;
+        this.toast.show('¡ALERTA! SOBRECARGA INMINENTE DEL GENERADOR');
+        try { this.audio.sfxHurt?.(); } catch (e) {}
+      }
+
+      if (this.levelTimer <= 15) {
+        this.fx.envElectric = Math.max(this.fx.envElectric, 0.2 + 0.25 * Math.sin(this.nowT * 14));
+        if (this.beatN % 2 === 0) {
+          this.fx.shake = Math.max(this.fx.shake, 0.12);
+        }
+      }
+
+      if (this.levelTimer <= 0) {
+        this.levelTimer = 0;
+        this.fx.envElectric = 1.0;
+        this.fx.shake = 0.8;
+        this.toast.show('¡SOBRECARGA FATAL DEL GENERADOR!');
+        this.hurt(999);
+      }
+    }
+
+    // Efecto de proximidad y latido hacia El Corazón en Nivel 4
+    if (this.state === 'play' && this.curLevel === 4 && this.boss && this.boss.alive) {
+      const distToHeart = Math.hypot(this.player.x - this.boss.x, this.player.y - this.boss.y);
+      const proximity = Math.max(0, 1 - distToHeart / 18);
+      if (proximity > 0.15) {
+        this.fx.pulse = Math.max(this.fx.pulse, proximity * 0.85);
+      }
+    }
 
     this.checkWaveProgress();
   }
@@ -964,7 +1009,7 @@ export class Game {
       drawHUD(
         this.ctx, this.player, this.hp, this.combo,
         this.enemies, this.curLevel, LEVELS[this.curLevel].name,
-        this.boss, this.toast
+        this.boss, this.toast, this.levelTimer
       );
     }
   }
