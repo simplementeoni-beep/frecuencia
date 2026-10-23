@@ -264,27 +264,188 @@
       box-shadow: 0 0 8px #00f0ff;
     }
 
-    /* Botón de alternar pantalla completa flotante */
-    .btn-fullscreen-pill {
+    /* ── Barra de Controles Superiores Flotantes (Sensi + Fullscreen) ── */
+    .top-stage-controls {
       position: absolute;
       top: 12px;
       right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 60;
+    }
+
+    .sensi-control-wrapper {
+      position: relative;
+    }
+
+    .btn-sensi-pill {
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: rgba(14, 10, 22, 0.82);
+      border: 1px solid rgba(169, 131, 255, 0.45);
+      color: #e9e5f2;
+      font-family: var(--font-mono, monospace);
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .btn-sensi-pill:active {
+      transform: scale(0.95);
+      border-color: var(--accent);
+    }
+
+    .btn-sensi-pill .sensi-icon {
+      font-size: 14px;
+    }
+
+    .btn-sensi-pill .sensi-badge {
+      font-size: 10px;
+      background: rgba(169, 131, 255, 0.22);
+      color: var(--accent, #a983ff);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(169, 131, 255, 0.4);
+      font-weight: bold;
+      letter-spacing: 0.05em;
+    }
+
+    /* Menú Desplegable de Sensibilidad */
+    .sensi-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 235px;
+      background: rgba(12, 8, 18, 0.96);
+      border: 1px solid rgba(169, 131, 255, 0.5);
+      border-radius: 10px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.95), 0 0 20px rgba(169, 131, 255, 0.3);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: sensiFadeIn 0.2s ease-out;
+      user-select: none;
+      z-index: 100;
+    }
+
+    @keyframes sensiFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sensi-dropdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono, monospace);
+      font-size: 11px;
+      color: var(--accent, #a983ff);
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 6px;
+    }
+
+    .sensi-close-x {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 6px;
+    }
+
+    .sensi-close-x:hover {
+      color: #fff;
+    }
+
+    .sensi-presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .sensi-preset-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #ddd;
+      border-radius: 6px;
+      padding: 6px 0;
+      font-family: var(--font-mono, monospace);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .sensi-preset-btn:hover {
+      background: rgba(169, 131, 255, 0.18);
+      color: #fff;
+      border-color: rgba(169, 131, 255, 0.5);
+    }
+
+    .sensi-preset-btn.active {
+      background: var(--accent, #a983ff);
+      color: #07050b;
+      font-weight: bold;
+      border-color: #fff;
+      box-shadow: 0 0 10px rgba(169, 131, 255, 0.6);
+    }
+
+    .sensi-slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sensi-slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono, monospace);
+      font-size: 10px;
+      color: #999;
+    }
+
+    .sensi-val-display {
+      color: var(--accent, #a983ff);
+      font-weight: bold;
+    }
+
+    .sensi-slider-group input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent, #a983ff);
+      cursor: pointer;
+    }
+
+    /* Botón de alternar pantalla completa flotante */
+    .btn-fullscreen-pill {
       width: 38px;
       height: 38px;
       border-radius: 8px;
-      background: rgba(14, 10, 22, 0.7);
-      border: 1px solid rgba(169, 131, 255, 0.4);
+      background: rgba(14, 10, 22, 0.82);
+      border: 1px solid rgba(169, 131, 255, 0.45);
       color: #e9e5f2;
       font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 50;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
     .btn-fullscreen-pill:active {
@@ -899,7 +1060,38 @@
       <div id="stage" tabindex="0">
         <canvas id="c" width="480" height="270"></canvas>
         <div class="crt-overlay"></div>
-        <button id="btn-fullscreen-toggle" class="btn-fullscreen-pill" aria-label="Pantalla completa" title="Alternar Pantalla Completa">⛶</button>
+
+        <!-- Barra Superior Flotante: Sensibilidad Desplegable + Pantalla Completa -->
+        <div class="top-stage-controls">
+          <div class="sensi-control-wrapper">
+            <button id="btn-sensi-toggle" class="btn-sensi-pill" aria-label="Ajustar Sensibilidad" title="Ajustar sensibilidad del joystick">
+              <span class="sensi-icon">🎯</span>
+              <span class="sensi-text">SENSI</span>
+              <span id="sensi-badge" class="sensi-badge">NORMAL</span>
+            </button>
+            <div id="sensi-dropdown" class="sensi-dropdown" style="display: none;">
+              <div class="sensi-dropdown-header">
+                <span>⚙️ SENSIBILIDAD GIRO</span>
+                <button id="btn-close-sensi" class="sensi-close-x" aria-label="Cerrar">&times;</button>
+              </div>
+              <div class="sensi-presets">
+                <button class="sensi-preset-btn" data-sensi="0.55" id="btn-sensi-baja">Baja</button>
+                <button class="sensi-preset-btn active" data-sensi="0.85" id="btn-sensi-media">Normal</button>
+                <button class="sensi-preset-btn" data-sensi="1.25" id="btn-sensi-alta">Alta</button>
+              </div>
+              <div class="sensi-slider-group">
+                <div class="sensi-slider-labels">
+                  <span>Suave</span>
+                  <span id="sensi-val-display" class="sensi-val-display">0.85x</span>
+                  <span>Rápida</span>
+                </div>
+                <input type="range" id="sensi-slider" min="0.35" max="1.6" step="0.05" value="0.85" />
+              </div>
+            </div>
+          </div>
+          <button id="btn-fullscreen-toggle" class="btn-fullscreen-pill" aria-label="Pantalla completa" title="Alternar Pantalla Completa">⛶</button>
+        </div>
+
         <div id="rotate-hint" class="rotate-hint" aria-hidden="true"><span class="rotate-hint-icon">📲</span><span>GIRA TU MÓVIL EN HORIZONTAL</span></div>
 
         <!-- PANTALLA 1: INICIO / TÍTULO -->
@@ -1171,8 +1363,8 @@
 
         // Eje vertical: arriba (-Y) es avanzar (+mv)
         const mv = -normY;
-        // Eje horizontal: derecha (+X) es girar a la derecha (+turn)
-        const turn = normX * 1.8;
+        // Eje horizontal: derecha (+X) es girar con sensibilidad regulada y jugable
+        const turn = normX * currentSensitivity;
 
         demo.input.setTouchMove(mv, 0, turn);
       };
@@ -1181,6 +1373,83 @@
       joyZone.addEventListener('pointermove', onPointerMove);
       joyZone.addEventListener('pointerup', onPointerUp);
       joyZone.addEventListener('pointercancel', onPointerUp);
+    }
+
+    // ── GESTOR DE SENSIBILIDAD DEL JOYSTICK ──
+    let currentSensitivity = parseFloat(localStorage.getItem('frecuencia_demo_sensi'));
+    if (isNaN(currentSensitivity) || currentSensitivity <= 0) {
+      currentSensitivity = 0.85; // Sensibilidad base optimizada (jugable, controlada y precisa)
+    }
+
+    const btnSensiToggle = document.getElementById('btn-sensi-toggle');
+    const sensiDropdown = document.getElementById('sensi-dropdown');
+    const btnCloseSensi = document.getElementById('btn-close-sensi');
+    const sensiBadge = document.getElementById('sensi-badge');
+    const sensiValDisplay = document.getElementById('sensi-val-display');
+    const sensiSlider = document.getElementById('sensi-slider');
+    const presetBtns = document.querySelectorAll('.sensi-preset-btn');
+
+    function updateSensiUI(val) {
+      currentSensitivity = Math.max(0.3, Math.min(1.8, val));
+      try {
+        localStorage.setItem('frecuencia_demo_sensi', currentSensitivity.toFixed(2));
+      } catch (e) {}
+
+      if (sensiSlider) sensiSlider.value = currentSensitivity.toFixed(2);
+      if (sensiValDisplay) sensiValDisplay.textContent = `${currentSensitivity.toFixed(2)}x`;
+
+      if (sensiBadge) {
+        if (currentSensitivity <= 0.65) {
+          sensiBadge.textContent = 'BAJA';
+        } else if (currentSensitivity >= 1.15) {
+          sensiBadge.textContent = 'ALTA';
+        } else {
+          sensiBadge.textContent = 'NORMAL';
+        }
+      }
+
+      presetBtns.forEach(btn => {
+        const pVal = parseFloat(btn.dataset.sensi);
+        if (Math.abs(pVal - currentSensitivity) < 0.12) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    if (btnSensiToggle && sensiDropdown) {
+      btnSensiToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = sensiDropdown.style.display !== 'none';
+        sensiDropdown.style.display = isOpen ? 'none' : 'block';
+      });
+
+      btnCloseSensi?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sensiDropdown.style.display = 'none';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!sensiDropdown.contains(e.target) && !btnSensiToggle.contains(e.target)) {
+          sensiDropdown.style.display = 'none';
+        }
+      });
+
+      presetBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetSensi = parseFloat(btn.dataset.sensi);
+          updateSensiUI(targetSensi);
+        });
+      });
+
+      sensiSlider?.addEventListener('input', (e) => {
+        const targetSensi = parseFloat(e.target.value);
+        updateSensiUI(targetSensi);
+      });
+
+      updateSensiUI(currentSensitivity);
     }
 
     // Botón de Ataque Táctil
