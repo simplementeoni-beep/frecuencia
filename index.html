@@ -1291,11 +1291,17 @@
       </div>
 
       <!-- Cartel Promocional Oficial -->
-      <div class="hero-poster-frame">
-        <span class="poster-tape">PROYECTO F · 2026</span>
-        <img src="bocetos/poster_promocional.jpg" alt="Póster Promocional de Frecuencia"
-             onerror="this.style.display='none';document.getElementById('poster-fallback').style.display='flex'">
-        <div id="poster-fallback" style="display:none;align-items:center;justify-content:center;min-height:320px;background:linear-gradient(135deg,#0e0a16,#1a1028);font-size:80px;">🎮</div>
+      <div class="hero-poster-wrapper">
+        <div class="hero-poster-frame">
+          <span class="poster-tape">PROYECTO F · 2026</span>
+          <img src="bocetos/poster_promocional.jpg" alt="Póster Promocional de Frecuencia"
+               onerror="this.style.display='none';document.getElementById('poster-fallback').style.display='flex'">
+          <div id="poster-fallback" style="display:none;align-items:center;justify-content:center;min-height:320px;background:linear-gradient(135deg,#0e0a16,#1a1028);font-size:80px;">🎮</div>
+        </div>
+        <div class="hero-poster-sub">
+          <span class="poster-sub-label">ARCHIVO OFICIAL · PROYECTO F</span>
+          <span id="secret-cc-trigger" class="secret-cc-trigger" title="Registro confidencial // Auditoría de proyectos">[EXP-742 · CC]</span>
+        </div>
       </div>
     </div>
   </section>
@@ -1819,9 +1825,6 @@
         <a href="#cronologia">📖 Historia</a>
       </div>
 
-      <!-- Micro disparador ultra secreto camuflado como código de archivo -->
-      <span id="secret-cc-trigger" class="secret-cc-trigger" title="Registro de auditoría interna">[EXP-742 · CC]</span>
-
     </div>
   </footer>
 
@@ -1855,23 +1858,52 @@
   </div>
 
   <style>
-    /* Estilos del Easter Egg Ultra Secreto CodeCraft */
-    .secret-cc-trigger {
-      display: inline-block;
+    /* Estilos del Easter Egg Ultra Secreto CodeCraft y Poster Subline */
+    .hero-poster-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hero-poster-sub {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
       font-family: var(--font-mono, monospace);
+    }
+
+    .poster-sub-label {
       font-size: 11px;
       color: var(--fg-dim, #888);
-      opacity: 0.22;
+      opacity: 0.6;
+      letter-spacing: 0.05em;
+    }
+
+    .secret-cc-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono, monospace);
+      font-size: 12px;
+      color: var(--accent, #a983ff);
+      background: rgba(169, 131, 255, 0.08);
+      border: 1px dashed rgba(169, 131, 255, 0.35);
+      border-radius: 4px;
+      padding: 3px 9px;
+      opacity: 0.78;
       cursor: pointer;
-      margin-top: 14px;
-      letter-spacing: 1px;
+      letter-spacing: 0.06em;
       transition: all 0.25s ease;
       user-select: none;
     }
     .secret-cc-trigger:hover {
-      opacity: 0.9;
-      color: var(--crimson, #dc143c);
-      text-shadow: 0 0 10px rgba(220, 20, 60, 0.6);
+      opacity: 1;
+      color: #fff;
+      background: rgba(220, 20, 60, 0.25);
+      border-color: var(--crimson, #ff4d6d);
+      box-shadow: 0 0 14px rgba(220, 20, 60, 0.6);
+      transform: translateY(-1px);
     }
     .cc-secret-modal {
       position: fixed;
