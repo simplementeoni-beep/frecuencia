@@ -177,43 +177,154 @@
       height: 140px;
     }
 
-    /* D-PAD virtual (Izquierda) */
-    .dpad-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 44px);
-      grid-template-rows: repeat(3, 44px);
-      gap: 3px;
-      user-select: none;
-    }
-
-    .dpad-key {
-      background: rgba(30, 24, 44, 0.85);
-      border: 1px solid rgba(169, 131, 255, 0.35);
-      border-radius: 8px;
-      color: #c9c1dc;
+    /* ── Joystick Virtual Analógico (Izquierda) ── */
+    .joystick-zone {
+      width: 120px;
+      height: 120px;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      font-weight: bold;
-      transition: all 0.1s ease;
-      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      flex-shrink: 0;
+      cursor: grab;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .dpad-key:active,
-    .dpad-key.active {
-      background: rgba(169, 131, 255, 0.45);
-      border-color: var(--accent);
-      color: #fff;
-      transform: scale(0.92);
-      box-shadow: 0 0 12px var(--accent-glow);
+    .joystick-base {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(169, 131, 255, 0.08) 0%, rgba(14, 10, 22, 0.75) 80%, rgba(7, 5, 11, 0.9) 100%);
+      border: 2px solid rgba(169, 131, 255, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(169, 131, 255, 0.2), inset 0 0 15px rgba(0, 0, 0, 0.85);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
     }
 
-    .dpad-key.empty {
-      background: transparent;
-      border: none;
+    .joystick-ring {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px dashed rgba(0, 240, 255, 0.3);
       pointer-events: none;
+    }
+
+    .joystick-crosshair-h {
+      position: absolute;
+      width: 80%;
+      height: 1px;
+      background: rgba(0, 240, 255, 0.15);
+      pointer-events: none;
+    }
+
+    .joystick-crosshair-v {
+      position: absolute;
+      height: 80%;
+      width: 1px;
+      background: rgba(0, 240, 255, 0.15);
+      pointer-events: none;
+    }
+
+    .joystick-knob {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      position: absolute;
+      background: radial-gradient(circle at 35% 35%, #bfa1ff 0%, #683ad4 55%, #190f30 100%);
+      border: 2px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 0 18px rgba(169, 131, 255, 0.7), 0 4px 10px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.16s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .joystick-knob.dragging {
+      transition: none;
+      box-shadow: 0 0 25px rgba(220, 20, 60, 0.85), 0 0 12px var(--cyan);
+      border-color: #fff;
+    }
+
+    .joystick-knob-center {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #00f0ff;
+      box-shadow: 0 0 8px #00f0ff;
+    }
+
+    /* Botón de alternar pantalla completa flotante */
+    .btn-fullscreen-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(14, 10, 22, 0.7);
+      border: 1px solid rgba(169, 131, 255, 0.4);
+      color: #e9e5f2;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 50;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-fullscreen-pill:active {
+      transform: scale(0.92);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Aviso para girar a horizontal si el móvil está en vertical */
+    .rotate-hint {
+      display: none;
+    }
+
+    @media (orientation: portrait) and (max-width: 768px) {
+      .rotate-hint {
+        display: flex;
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(220, 20, 60, 0.88);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-family: var(--font-body);
+        font-weight: 700;
+        letter-spacing: 1px;
+        gap: 8px;
+        align-items: center;
+        z-index: 100;
+        box-shadow: 0 0 16px rgba(220, 20, 60, 0.65);
+        pointer-events: none;
+        animation: pulseHint 2.4s infinite;
+      }
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.95; transform: translateX(-50%) scale(1); }
+      50% { opacity: 0.7; transform: translateX(-50%) scale(0.97); }
     }
 
     /* Centro: Monitor cardíaco y ritmo */
@@ -713,9 +824,22 @@
       }
     }
 
-    @media (orientation: landscape) and (max-height: 520px) {
+    @media (orientation: landscape) {
       .top-bar {
-        display: none;
+        display: none !important;
+      }
+      #stage-wrapper {
+        flex: 1 1 auto;
+        width: 100vw;
+        height: 100vh;
+      }
+      #stage {
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        max-height: 100vh;
+        aspect-ratio: auto;
+        border-radius: 0;
       }
       #touch-deck {
         position: absolute;
@@ -725,9 +849,13 @@
         background: transparent;
         border-top: none;
         pointer-events: none;
-        padding: 12px;
+        padding: 10px 24px max(12px, env(safe-area-inset-bottom, 12px));
+        height: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
       }
-      .dpad-grid, .action-group {
+      .joystick-zone, .action-group {
         pointer-events: auto;
       }
       .rhythm-monitor {
@@ -771,6 +899,8 @@
       <div id="stage" tabindex="0">
         <canvas id="c" width="480" height="270"></canvas>
         <div class="crt-overlay"></div>
+        <button id="btn-fullscreen-toggle" class="btn-fullscreen-pill" aria-label="Pantalla completa" title="Alternar Pantalla Completa">⛶</button>
+        <div id="rotate-hint" class="rotate-hint" aria-hidden="true"><span class="rotate-hint-icon">📲</span><span>GIRA TU MÓVIL EN HORIZONTAL</span></div>
 
         <!-- PANTALLA 1: INICIO / TÍTULO -->
         <div id="title" class="ov">
@@ -875,15 +1005,16 @@
 
     <!-- DECK INFERIOR: CONTROLES TÁCTILES MÓVILES -->
     <nav id="touch-deck" aria-label="Controles táctiles del juego">
-      <!-- D-Pad (Pulgar Izquierdo) -->
-      <div class="dpad-grid" id="virtual-dpad">
-        <div class="dpad-key empty"></div>
-        <button class="dpad-key" id="pad-up" aria-label="Avanzar">▲</button>
-        <div class="dpad-key empty"></div>
-
-        <button class="dpad-key" id="pad-left" aria-label="Girar izquierda">◀</button>
-        <button class="dpad-key" id="pad-down" aria-label="Retroceder">▼</button>
-        <button class="dpad-key" id="pad-right" aria-label="Girar derecha">▶</button>
+      <!-- Joystick Analógico Virtual (Pulgar Izquierdo) -->
+      <div class="joystick-zone" id="joystick-zone" aria-label="Joystick de movimiento y giro">
+        <div class="joystick-base" id="joystick-base">
+          <div class="joystick-ring"></div>
+          <div class="joystick-crosshair-h"></div>
+          <div class="joystick-crosshair-v"></div>
+          <div class="joystick-knob" id="joystick-knob">
+            <div class="joystick-knob-center"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Monitor Central ECG (Ritmo 100 BPM) -->
@@ -922,12 +1053,12 @@
     window.demoGame = demo;
     demo.startDemo();
 
-    // ── GESTIÓN DE PANTALLA COMPLETA Y ORIENTACIÓN VERTICAL ──
+    // ── GESTIÓN DE PANTALLA COMPLETA Y ORIENTACIÓN HORIZONTAL ──
     async function startExperience() {
       // 1. Iniciar nivel y desbloquear audio
       demo.beginAt(0);
 
-      // 2. Solicitar Pantalla Completa en el contenedor
+      // 2. Solicitar Pantalla Completa en toda la ventana
       try {
         const el = document.documentElement;
         if (el.requestFullscreen) {
@@ -936,16 +1067,16 @@
           await el.webkitRequestFullscreen();
         }
       } catch (e) {
-        // Fullscreen no permitido o bloqueado por el navegador
+        console.warn('Fullscreen no disponible o bloqueado:', e);
       }
 
-      // 3. Fijar orientación en vertical (portrait)
+      // 3. Fijar orientación en HORIZONTAL (landscape)
       try {
         if (screen.orientation && screen.orientation.lock) {
-          await screen.orientation.lock('portrait');
+          await screen.orientation.lock('landscape');
         }
       } catch (e) {
-        // Orientation lock no compatible en este navegador/dispositivo
+        console.warn('Orientation lock no soportado en este navegador:', e);
       }
     }
 
@@ -953,46 +1084,104 @@
       startExperience();
     });
 
-    // ── VINCULACIÓN DE CONTROLES TÁCTILES ──
-    const dpadState = { up: false, down: false, left: false, right: false };
+    // Botón de Pantalla Completa manual
+    document.getElementById('btn-fullscreen-toggle')?.addEventListener('click', async () => {
+      try {
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            await document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            await document.documentElement.webkitRequestFullscreen();
+          }
+          if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock('landscape');
+          }
+        } else {
+          if (document.exitFullscreen) await document.exitFullscreen();
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    });
 
-    function syncTouchMove() {
-      let mv = 0, turn = 0;
-      if (dpadState.up) mv += 1;
-      if (dpadState.down) mv -= 1;
-      if (dpadState.left) turn -= 1.6;
-      if (dpadState.right) turn += 1.6;
-      demo.input.setTouchMove(mv, 0, turn);
-    }
+    // ── VINCULACIÓN DEL JOYSTICK ANALÓGICO VIRTUAL ──
+    const joyZone = document.getElementById('joystick-zone');
+    const joyKnob = document.getElementById('joystick-knob');
+    let joyPointerId = null;
+    let joyCenterX = 0;
+    let joyCenterY = 0;
+    const maxRadius = 40; // radio máximo en píxeles
 
-    function bindDpadBtn(id, key) {
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      const press = (e) => {
-        e.preventDefault();
-        dpadState[key] = true;
-        el.classList.add('active');
-        syncTouchMove();
+    if (joyZone && joyKnob) {
+      const getCenter = () => {
+        const rect = joyZone.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
       };
 
-      const release = (e) => {
-        e.preventDefault();
-        dpadState[key] = false;
-        el.classList.remove('active');
-        syncTouchMove();
+      const onPointerDown = (e) => {
+        if (joyPointerId !== null) return;
+        joyPointerId = e.pointerId;
+        joyZone.setPointerCapture?.(e.pointerId);
+        joyKnob.classList.add('dragging');
+
+        const center = getCenter();
+        joyCenterX = center.x;
+        joyCenterY = center.y;
+
+        updateStick(e.clientX, e.clientY);
       };
 
-      el.addEventListener('pointerdown', press);
-      el.addEventListener('pointerup', release);
-      el.addEventListener('pointercancel', release);
-      el.addEventListener('pointerleave', release);
-    }
+      const onPointerMove = (e) => {
+        if (e.pointerId !== joyPointerId) return;
+        updateStick(e.clientX, e.clientY);
+      };
 
-    bindDpadBtn('pad-up', 'up');
-    bindDpadBtn('pad-down', 'down');
-    bindDpadBtn('pad-left', 'left');
-    bindDpadBtn('pad-right', 'right');
+      const onPointerUp = (e) => {
+        if (e.pointerId !== joyPointerId) return;
+        joyPointerId = null;
+        joyKnob.classList.remove('dragging');
+        joyKnob.style.transform = 'translate(0px, 0px)';
+        demo.input.setTouchMove(0, 0, 0);
+      };
+
+      const updateStick = (clientX, clientY) => {
+        const dx = clientX - joyCenterX;
+        const dy = clientY - joyCenterY;
+        const dist = Math.hypot(dx, dy);
+
+        let clampedX = dx;
+        let clampedY = dy;
+        if (dist > maxRadius) {
+          clampedX = (dx / dist) * maxRadius;
+          clampedY = (dy / dist) * maxRadius;
+        }
+
+        joyKnob.style.transform = `translate(${clampedX.toFixed(1)}px, ${clampedY.toFixed(1)}px)`;
+
+        // Normalizar entre -1 y 1
+        let normX = clampedX / maxRadius;
+        let normY = clampedY / maxRadius;
+
+        // Zona muerta (deadzone) suave
+        if (Math.abs(normX) < 0.08) normX = 0;
+        if (Math.abs(normY) < 0.08) normY = 0;
+
+        // Eje vertical: arriba (-Y) es avanzar (+mv)
+        const mv = -normY;
+        // Eje horizontal: derecha (+X) es girar a la derecha (+turn)
+        const turn = normX * 1.8;
+
+        demo.input.setTouchMove(mv, 0, turn);
+      };
+
+      joyZone.addEventListener('pointerdown', onPointerDown);
+      joyZone.addEventListener('pointermove', onPointerMove);
+      joyZone.addEventListener('pointerup', onPointerUp);
+      joyZone.addEventListener('pointercancel', onPointerUp);
+    }
 
     // Botón de Ataque Táctil
     const attackBtn = document.getElementById('btn-touch-attack');
