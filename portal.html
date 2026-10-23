@@ -1819,12 +1819,198 @@
         <a href="#cronologia">📖 Historia</a>
       </div>
 
+      <!-- Micro disparador ultra secreto camuflado como código de archivo -->
+      <span id="secret-cc-trigger" class="secret-cc-trigger" title="Registro de auditoría interna">[EXP-742 · CC]</span>
+
     </div>
   </footer>
+
+  <!-- Modal Ultra Secreto: Protocolo CodeCraft -->
+  <div id="modal-codecraft" class="cc-secret-modal" style="display:none;" role="dialog" aria-modal="true">
+    <div class="cc-modal-backdrop" id="cc-backdrop"></div>
+    <div class="cc-modal-content">
+      <div class="cc-modal-header">
+        <span class="cc-badge">⚠️ ARCHIVO RESTRINGIDO · EXP-742</span>
+        <button id="btn-close-cc" class="cc-close-x" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="cc-terminal-body">
+        <div class="cc-line cc-green">&gt; PROTOCOLO: AUDITORIA_FORENSE_SISTEMA_F.exe</div>
+        <div class="cc-line">&gt; Escaneando proyectos vecinos en la feria escolar...</div>
+        <div class="cc-line cc-alert">&gt; ¡COINCIDENCIA ENCONTRADA EN SECTOR: [CODECRAFT]!</div>
+        <div class="cc-divider"></div>
+        <div class="cc-quote">
+          «Nuestros sensores detectaron una fuga sospechosa de creatividad hacia las coordenadas del equipo <strong>CodeCraft</strong>...<br><br>
+          📊 Coincidencia de ideas con FRECUENCIA: <strong>99.8%</strong><br>
+          🧬 Originalidad del código: <em>[ERROR 404: INSPIRACIÓN NO ENCONTRADA]</em><br><br>
+          Tranquilos muchachos de CodeCraft, ¡no pasa nada! Dicen que la imitación es la forma más sincera de admiración. 😉🚀<br><br>
+          ¡Les deseamos mucho éxito en la feria de parte de <strong>Oni y FRECUENCIA</strong>!<br>
+          <span style="font-size:12px;color:#a983ff;">(P.D.: Recuerden cambiarle los nombres a las variables para que los profes no sospechen 😂)</span>»
+        </div>
+        <div class="cc-divider"></div>
+        <div class="cc-footer-actions">
+          <button id="btn-ack-cc" class="cc-action-btn">🤫 DESTRUIR ESTA EVIDENCIA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Estilos del Easter Egg Ultra Secreto CodeCraft */
+    .secret-cc-trigger {
+      display: inline-block;
+      font-family: var(--font-mono, monospace);
+      font-size: 11px;
+      color: var(--fg-dim, #888);
+      opacity: 0.22;
+      cursor: pointer;
+      margin-top: 14px;
+      letter-spacing: 1px;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+    .secret-cc-trigger:hover {
+      opacity: 0.9;
+      color: var(--crimson, #dc143c);
+      text-shadow: 0 0 10px rgba(220, 20, 60, 0.6);
+    }
+    .cc-secret-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .cc-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(4, 2, 8, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .cc-modal-content {
+      position: relative;
+      background: #0d0816;
+      border: 1px solid rgba(220, 20, 60, 0.6);
+      box-shadow: 0 0 40px rgba(220, 20, 60, 0.35), inset 0 0 25px rgba(0, 0, 0, 0.85);
+      border-radius: 12px;
+      max-width: 540px;
+      width: 100%;
+      overflow: hidden;
+      animation: ccPopIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    @keyframes ccPopIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .cc-modal-header {
+      background: rgba(220, 20, 60, 0.15);
+      border-bottom: 1px solid rgba(220, 20, 60, 0.35);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cc-badge {
+      font-family: var(--font-mono, monospace);
+      font-size: 13px;
+      color: #ff4d6d;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+    }
+    .cc-close-x {
+      background: transparent;
+      border: none;
+      color: #9b94ae;
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .cc-close-x:hover { color: #fff; }
+    .cc-terminal-body {
+      padding: 18px 22px 22px;
+      font-family: var(--font-mono, monospace);
+      font-size: 14px;
+      color: #c9c1dc;
+      line-height: 1.6;
+    }
+    .cc-line { margin-bottom: 4px; }
+    .cc-green { color: #27c93f; }
+    .cc-alert { color: #ffbe0b; font-weight: bold; }
+    .cc-divider {
+      height: 1px;
+      background: rgba(169, 131, 255, 0.2);
+      margin: 14px 0;
+    }
+    .cc-quote {
+      font-family: var(--font-body, sans-serif);
+      font-size: 14px;
+      color: #e9e5f2;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent, #a983ff);
+      padding: 12px 14px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .cc-quote strong { color: #fff; }
+    .cc-footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+    .cc-action-btn {
+      background: rgba(220, 20, 60, 0.2);
+      border: 1px solid rgba(220, 20, 60, 0.5);
+      color: #ff6b84;
+      font-family: var(--font-mono, monospace);
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cc-action-btn:hover {
+      background: var(--crimson, #dc143c);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(220, 20, 60, 0.6);
+    }
+  </style>
 
   <div id="toast-msg"></div>
 
   <script>
+    // Easter egg CodeCraft (discreto / ultra secreto)
+    const ccModal = document.getElementById('modal-codecraft');
+    const ccTrigger = document.getElementById('secret-cc-trigger');
+    const ccCloseX = document.getElementById('btn-close-cc');
+    const ccAck = document.getElementById('btn-ack-cc');
+    const ccBackdrop = document.getElementById('cc-backdrop');
+
+    function openCodeCraftModal() {
+      if (ccModal) ccModal.style.display = 'flex';
+    }
+    function closeCodeCraftModal() {
+      if (ccModal) ccModal.style.display = 'none';
+    }
+
+    ccTrigger?.addEventListener('click', openCodeCraftModal);
+    ccCloseX?.addEventListener('click', closeCodeCraftModal);
+    ccAck?.addEventListener('click', closeCodeCraftModal);
+    ccBackdrop?.addEventListener('click', closeCodeCraftModal);
+
+    // Cheat code secreto: teclear 'codecraft'
+    let ccBuffer = '';
+    window.addEventListener('keydown', e => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      ccBuffer = (ccBuffer + e.key.toLowerCase()).slice(-9);
+      if (ccBuffer === 'codecraft') {
+        openCodeCraftModal();
+        ccBuffer = '';
+      }
+    });
+
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeKNJmiwwgnRDQQN9P2blkYQKLdowYSSUZPecqJTXyzNEASww/viewform';
 
     const toastMsg = document.getElementById('toast-msg');
